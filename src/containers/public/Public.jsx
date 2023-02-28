@@ -4,11 +4,13 @@ import { Header, Footer } from "../../components";
 
 const Public = () => {
   return (
-    <div>
+    <>
       <Header />
-      <Outlet />
+      <div className="auth-wrapper">
+        <Outlet />
+      </div>
       <Footer />
-    </div>
+    </>
   );
 };
 

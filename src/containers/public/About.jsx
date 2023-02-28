@@ -1,5 +1,16 @@
 import React from "react";
 import taco_chefcartoon from "../../assets/images/taco-chefcartoon.png";
+import bun5 from '../../assets/images/anhkremove/bun5.jpg'
+import banhmi8 from '../../assets/images/anhkremove/banhmi8.jpg'
+import banhmi4 from '../../assets/images/anhkremove/banhmi4.jpg'
+import pho2 from '../../assets/images/anhkremove/pho2.jpg'
+import pho9 from '../../assets/images/anhkremove/pho9.jpg'
+import bun3 from '../../assets/images/anhkremove/bun3.jpg'
+import pho6 from '../../assets/images/anhkremove/pho6.jpg'
+import tu5 from '../../assets/images/anhkremove/tu5.jpg'
+import tm4 from '../../assets/images/anhkremove/tm4.jpg'
+import tm7 from '../../assets/images/anhkremove/tm7.jpg'
+
 
 function About() {
   return (
@@ -38,16 +49,16 @@ function About() {
           </div>
           <div className="row gallery">
             <div className="wrapper">
-              <img src="" alt="" />
-              <img src="" alt="" />
-              <img src="" alt="" />
-              <img src="" alt="" />
-              <img src="" alt="" />
-              <img src="" alt="" />
-              <img src="" alt="" />
-              <img src="" alt="" />
-              <img src="" alt="" />
-              <img src="" alt="" />
+              <img src={banhmi4} alt="" />
+              <img src={banhmi8} alt="" />
+              <img src={bun3} alt="" />
+              <img src={bun5} alt="" />
+              <img src={pho2} alt="" />
+              <img src={pho9} alt="" />
+              <img src={pho6} alt="" />
+              <img src={tu5} alt="" />
+              <img src={tm4} alt="" />
+              <img src={tm7} alt="" />
             </div>
           </div>
         </div>

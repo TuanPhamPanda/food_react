@@ -9,6 +9,9 @@ module.exports = {
       scale: {
         '175': '1.75',
       },
+      backgroundColor: {
+        "main-primary": "#27ae60"
+      }
     },
   },
   plugins: [],
