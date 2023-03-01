@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Menu = () => {
-  const status = [
+  const [status, setStatus] = useState([
     { status: "Bán Chạy nhất" },
     { status: "Bán Online" },
     { status: "Giảm Giá" },
     { status: "Món Ăn Theo Mùa" },
     { status: "Món Mới" },
-  ];
+  ]);
 
   const [newStatus, setNewStatus] = useState([]);
 
@@ -41,33 +41,6 @@ const Menu = () => {
     );
   };
 
-  const handleActiveStatus = (sta) => {
-    let stateTemp = status
-      .map((item) => {
-        if (item.status === sta) {
-          return {
-            status: item.status,
-            isActive: true,
-          };
-        }
-      })
-      .filter((item) => {
-        return item !== undefined;
-      });
-
-    stateTemp.forEach((item) => {
-      setNewStatus((prev) => [
-        ...prev,
-        {
-          status: item.status,
-          isActive: item.isActive,
-        },
-      ]);
-    });
-  };
-
-  console.log(newStatus);
-
   const hadleCancelType = () => {
     setTypes((prev) =>
       prev.map((item) => {
@@ -84,10 +57,35 @@ const Menu = () => {
     );
   };
 
-  const handleCancelStatus = () => {};
+  const handleActiveStatus = (sta) => {
+    setNewStatus((prev) => {
+      const isChecked = newStatus.some((item) => item.status === sta);
+      if (isChecked) {
+        return [...prev];
+      } else {
+        return [...prev, { status: sta, isChecked: true }];
+      }
+    });
+  };
 
-  //.select-btn
-  //.unselect-btn
+  useEffect(() => {
+    console.log(newStatus);
+  }, [newStatus]);
+
+  const handleCancelStatus = (sta) => {
+    setNewStatus((prev) => {
+      const isChecked = newStatus.some((item) => item.status === sta);
+      if (isChecked) {
+        return newStatus.filter((item) => item.status !== sta);
+      } else {
+        return [...prev];
+      }
+    });
+  };
+
+  useEffect(() => {
+    
+  }, [newStatus]);
 
   return (
     <div className="auth-inner">
