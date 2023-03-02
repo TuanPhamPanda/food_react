@@ -1,4 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { menuFood } from "../../ultis/menus";
+import { Food } from "../../components";
+import icons from "../../ultis/icons";
+import { FoodApi } from "../../apis/FoodApi";
+
+const { AiOutlineArrowLeft, AiOutlineArrowRight } = icons;
 
 const Menu = () => {
   const [status, setStatus] = useState([
@@ -68,23 +74,34 @@ const Menu = () => {
     });
   };
 
-  useEffect(() => {
-    console.log(newStatus);
-  }, [newStatus]);
-
   const handleCancelStatus = (sta) => {
-    setNewStatus((prev) => {
-      const isChecked = newStatus.some((item) => item.status === sta);
-      if (isChecked) {
-        return newStatus.filter((item) => item.status !== sta);
-      } else {
-        return [...prev];
-      }
+    setNewStatus(() => {
+      let isChecked = newStatus.find((item) => item.status === sta);
+      let temp = newStatus
+        .map((item) => {
+          if (isChecked.isChecked && item.status === isChecked.status) {
+            return undefined;
+          } else {
+            return item;
+          }
+        })
+        .filter((item) => item !== undefined);
+      return temp;
     });
   };
 
   useEffect(() => {
-    
+    let temp = [];
+
+    status.forEach((item) => {
+      let isChecked = newStatus?.find((i) => i.status === item.status);
+      if (isChecked?.isChecked !== undefined) {
+        temp.push(isChecked);
+      } else if (!isChecked?.isChecked) {
+        temp.push({ status: item.status });
+      }
+    });
+    setStatus(temp);
   }, [newStatus]);
 
   return (
@@ -94,7 +111,7 @@ const Menu = () => {
           <span>Thực Đơn</span>
           <h3>Món Ăn Đặc Biệt Của Chúng Tôi</h3>
         </div>
-        <div className="flex row">
+        <div className="flex justify-center">
           <div className="col-sm-4 col-12 filter-box">
             <div className="row search-box">
               <input
@@ -121,14 +138,14 @@ const Menu = () => {
                       >
                         {item.status}
                       </span>
-                      <button
-                        onClick={(e) => {
-                          handleCancelStatus(item.status);
-                        }}
-                        className="select-btn bg-main-primary text-white"
-                      >
-                        x
-                      </button>
+                      {item.isChecked && (
+                        <button
+                          onClick={() => handleCancelStatus(item.status)}
+                          className={`select-btn bg-main-primary text-white`}
+                        >
+                          x
+                        </button>
+                      )}
                     </li>
                   );
                 })}
@@ -201,6 +218,54 @@ const Menu = () => {
                   );
                 })}
               </ul>
+            </div>
+          </div>
+
+          <div className="col-sm-8">
+            <div className="flex flex-wrap mb-[-15px]">
+              <div className="menu-tabs flex justify-center flex-wrap">
+                <button className="menu-tab-item">All</button>
+                {menuFood.map((item, index) => (
+                  <button className="menu-tab-item" key={index}>
+                    {item.text}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="row box-container">
+                {FoodApi.map((item) => (
+                  <Food key={item.food_id} food={item} />
+                ))}
+            </div>
+            <div className="action-row flex justify-center items-center">
+              <div className="inline-block">
+                <span className="btn flex">
+                  <AiOutlineArrowLeft size={24} />
+                </span>
+              </div>
+              <div className="inline-block">
+                <span className="highlight">1</span>
+              </div>
+              <div className="inline-block">
+                <span>2</span>
+              </div>
+              <div className="inline-block">
+                <span>3</span>
+              </div>
+              <div className="inline-block">
+                <span>4</span>
+              </div>
+              <div className="inline-block">
+                <span>5</span>
+              </div>
+              <div className="inline-block">
+                <span>6</span>
+              </div>
+              <div className="inline-block">
+                <span className="btn flex">
+                  <AiOutlineArrowRight size={24} />
+                </span>
+              </div>
             </div>
           </div>
         </div>

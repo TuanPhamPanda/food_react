@@ -2,9 +2,9 @@ import { MdOutlineLibraryMusic } from "react-icons/md";
 import { HiAdjustments } from "react-icons/hi";
 import { TbChartArcs } from "react-icons/tb";
 import { FaUser, FaShoppingCart } from "react-icons/fa";
-import { BsThreeDots, BsFacebook, BsTwitter, BsInstagram, BsPinterest } from "react-icons/bs";
+import { BsThreeDots, BsFacebook, BsTwitter, BsInstagram, BsPinterest, BsStarFill, BsStarHalf } from "react-icons/bs";
 import { CiRepeat } from "react-icons/ci";
-import { AiFillHeart, AiOutlineArrowRight } from "react-icons/ai";
+import { AiFillHeart, AiOutlineArrowRight, AiOutlineArrowLeft } from "react-icons/ai";
 
 const icons = {
   MdOutlineLibraryMusic,
@@ -19,7 +19,10 @@ const icons = {
   BsTwitter,
   BsInstagram,
   BsPinterest,
-  AiOutlineArrowRight
+  AiOutlineArrowRight,
+  BsStarFill,
+  BsStarHalf,
+  AiOutlineArrowLeft,
 };
 
 export default icons;

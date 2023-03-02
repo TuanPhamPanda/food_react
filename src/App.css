@@ -151,7 +151,7 @@ html {
 }
 
 .btn {
-  padding: 0.7rem 1.8rem;
+  padding: 1rem 1.8rem;
   font-size: 1.7rem;
   cursor: pointer;
   color: #fff;
@@ -530,218 +530,240 @@ html {
 .unselect-btn:focus,
 .action-btn:active,
 .action-btn:focus {
-    border: none;
-    outline: none;
+  border: none;
+  outline: none;
 }
 
 hr {
-    border-top: 3px solid #057835fa;
-    margin-top: 12px;
-    width: 100%;
+  border-top: 3px solid #057835fa;
+  margin-top: 12px;
+  width: 100%;
 }
 
 .filter-section {
-    width: inherit;
+  width: inherit;
 }
 
 .filter-heading {
-    padding-top: 12px;
+  padding-top: 12px;
 }
 
 .filter-heading h1 {
-    color: #27ae60;
-    font-size: 20px;
-    font-weight: 700;
-    cursor: default;
+  color: #27ae60;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: default;
 }
 
 .filter-option {
-    list-style-type: none;
-    width: inherit;
+  list-style-type: none;
+  width: inherit;
 }
 
-.filter-option li{
+.filter-option li {
   display: flex;
   width: 100%;
 }
 
 .filter-option span {
-    width: 100%;
-    display: flex;
-    font-size: 15px;
-    padding: 4px 16px;
+  width: 100%;
+  display: flex;
+  font-size: 15px;
+  padding: 4px 16px;
 }
 
-.filter-option span:hover, .filter-option button:hover{
-    color: white;
-    background-color: #f38609 !important;
-    transition: all 0.5s ease;
+.filter-option span:hover,
+.filter-option button:hover {
+  color: white;
+  background-color: #f38609 !important;
+  transition: all 0.5s ease;
 }
 
-.select-btn{
+.select-btn {
   font-size: 14px;
   padding: 0 24px;
   display: block;
 }
 
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
 .search-box {
-    width: 100%;
-    justify-content: center;
-    position: relative;
-    display: flex;
+  width: 100%;
+  justify-content: center;
+  position: relative;
+  display: flex;
 }
 
 .search-input {
-    margin: 0;
-    width: 100%;
-    height: 32px;
-    padding-left: 4px;
-    font-size: 20px;
-    color: white;
-    background: #27ae60;
+  margin: 0;
+  width: 100%;
+  height: 40px;
+  border-radius: 4%;
+  padding-left: 8px;
+  font-size: 20px;
+  color: white;
+  background: #27ae60;
 }
 
 ::placeholder {
-    color: white;
+  color: white;
 }
 
 .menu-section {
-    padding: 2rem 9%;
+  padding: 2rem 4%;
 }
 
 .menu-section .menu-tabs {
-    margin-bottom: 30px;
-    flex: 0 0 100%;
-    max-width: 100%;
-    text-align: center;
-    background-color: #27ae60;
+  margin-bottom: 30px;
+  flex: 0 0 100%;
+  max-width: 100%;
+  text-align: center;
+  background-color: #27ae60;
+  border-radius: 2%;
 }
 
 .menu-section .menu-tabs .menu-tab-item {
-    display: inline-block;
-    cursor: pointer;
-    padding: 5px 25px;
-    border-radius: 30%;
-    font-size: 20px;
-    color: whitesmoke;
-    font-weight: 500;
-    text-transform: capitalize;
-    transition: all 0.3s ease;
-    margin: 0;
+  display: inline-block;
+  cursor: pointer;
+  padding: 5px 25px;
+  border-radius: 15%;
+  font-size: 20px;
+  color: whitesmoke;
+  font-weight: 500;
+  text-transform: capitalize;
+  transition: all 0.3s ease;
+  margin-bottom: 4px;
 }
 
 .menu-section .menu-tabs .menu-tab-item:hover {
-    background-color: #f38609 !important;
+  background-color: #f38609 !important;
 }
 
 .menu-section .menu-tabs .menu-tab-item p {
-    padding: none;
-    margin: none;
+  padding: none;
+  margin: none;
 }
 
 .menu-section .box-container {
-    display: grid;
-    /* chinh giao dien */
-    grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+  gap: 1.5rem;
 }
 
 .menu-section .box-container .box {
-    border-radius: 0.5rem;
-    position: relative;
-    background: #f7f7f7;
-    padding: 2rem;
-    text-align: center;
+  border-radius: 0.5rem;
+  position: relative;
+  background: #f7f7f7;
+  padding: 2rem;
+  text-align: center;
 }
 
 .menu-section .box-container .box .fa-heart {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    font-size: 2.5rem;
-    color: #666;
-    cursor: pointer;
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 2.5rem;
+  color: #666;
+  cursor: pointer;
 }
 
 .menu-section .box-container .box .fa-heart:hover {
-    color: #27ae60;
+  color: #27ae60;
 }
 
 .menu-section .box-container .box .image {
-    margin: 1rem 0;
+  margin: 1rem 0;
+  display: flex;
+    justify-content: center;
 }
 
 .menu-section .box-container .box .image img {
-    height: 15rem;
+  height: 15rem;
 }
 
 .menu-section .box-container .box .content h3 {
-    font-size: 2rem;
-    color: #130f40;
+  font-size: 2rem;
+  color: #130f40;
 }
 
 .menu-section .box-container .box .content .stars {
-    padding: 1rem 0;
-    font-size: 1.7rem;
+  padding: 1rem 0;
+  font-size: 1.7rem;
 }
 
-.menu-section .box-container .box .content .stars i {
-    color: gold;
+.menu-section .box-container .box .content .stars svg {
+  color: gold;
 }
 
 .menu-section .box-container .box .content .stars span {
-    color: #666;
+  color: #666;
 }
 
 .menu-section .box-container .box .content .desc p {
-    font-size: 14px;
-    margin: 0;
+  font-size: 14px;
+  margin: 0;
 }
 
 .menu-section .box-container .box .content .price {
-    font-size: 2rem;
-    color: #130f40;
+  font-size: 2rem;
+  color: #130f40;
 }
 
 .menu-section .box-container .box .content .price span {
-    font-size: 1.5rem;
-    color: #666;
-    text-decoration: line-through;
+  font-size: 1.5rem;
+  color: #666;
+  text-decoration: line-through;
 }
 
 .menu-section .action-row {
-    padding-top: 30px;
-    width: 100%;
-    text-align: center;
-    font-size: 20px;
+  padding-top: 30px;
+  width: 100%;
+  font-size: 20px;
 }
 
 .menu-section .action-row .action-btn {
-    background-color: #27ae60;
-    padding: 3px;
-    border: 2px solid #27ae60;
-    border-radius: 30%;
-    color: white;
+  background-color: #27ae60;
+  padding: 3px;
+  border: 2px solid #27ae60;
+  border-radius: 30%;
+  color: white;
 }
 
 .menu-section .action-row span {
-    margin-right: 15px;
+  margin-right: 15px;
+}
+
+.menu-section .action-row svg {
+  color: black;
+  padding: 0;
 }
 
 .menu-section .action-row span:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .menu-section .action-row span.highlight {
-    color: #f38609;
+  color: #f38609;
 }
 
 .menu-section .action-row span:first-of-type {
-    margin-left: 15px;
+  margin-left: 15px;
 }
 
 .filter-drop-down {
-    display: none;
+  display: none;
+}
+
+.col-sm-8 {
+  position: relative;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
 }
 
 .footer {
@@ -904,18 +926,18 @@ hr {
   }
 
   .order #bookTableForm .row .input-box {
-      width: 100%;
+    width: 100%;
   }
 
   .order-section #bookTableForm .row {
-      display: block;
-      max-width: 100%;
-      width: 100%;
-      margin: 0;
+    display: block;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
   }
 
   .order-section #bookTableForm .row .input-box {
-      width: 100%;
+    width: 100%;
   }
 
   .about-section .about-content img {
@@ -924,6 +946,14 @@ hr {
 
   .about-section .gallery .wrapper img:hover {
     transform: scale(2.5);
+  }
+}
+
+@media (min-width: 576px) {
+  .col-sm-8 {
+    -ms-flex: 0 0 66.666667%;
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
   }
 }
 
@@ -942,7 +972,7 @@ hr {
   }
 
   .order-section .icons-container {
-      grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
   }
 
   .about-section .about-content img {
