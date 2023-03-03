@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { createRoot } from "react-dom/client";
 import { menuFood } from "../../ultis/menus";
 import { Food } from "../../components";
 import icons from "../../ultis/icons";
 import { FoodApi } from "../../apis/FoodApi";
 
 const { AiOutlineArrowLeft, AiOutlineArrowRight } = icons;
-
+var root, page;
+var fillter = [];
 const Menu = () => {
   const [status, setStatus] = useState([
     { status: "Bán Chạy nhất" },
@@ -14,6 +16,34 @@ const Menu = () => {
     { status: "Món Ăn Theo Mùa" },
     { status: "Món Mới" },
   ]);
+
+  const renderFoodAll = () => {
+    return FoodApi.map((item) => <Food key={item.food_id} food={item} />);
+  };
+
+  const handleFoodAll = () => {
+    hadleCancelPrice();
+    hadleCancelType();
+
+    if (root === undefined) {
+      root = createRoot(document.getElementById("food"));
+    }
+    fillter = renderFoodAll();
+
+    root.render(fillter);
+  };
+
+  const handleClickMenuItem = (menu) => {
+    if (root === undefined) {
+      root = createRoot(document.getElementById("food"));
+    }
+    let menuItems = renderFoodAll().filter(
+      (item) =>
+        item.props.food.food_category.toLocaleLowerCase() ===
+        menu.toLocaleLowerCase()
+    );
+    root.render(menuItems);
+  };
 
   const [newStatus, setNewStatus] = useState([]);
 
@@ -103,6 +133,162 @@ const Menu = () => {
     });
     setStatus(temp);
   }, [newStatus]);
+
+  useEffect(() => {
+    let price = prices.find((item) => item.isActive === true);
+    let type = types.find((item) => item.isActive === true);
+    let sta = status.filter((item) => item.isChecked === true);
+
+    fillter = renderFoodAll();
+    if (price !== undefined || type !== undefined || sta.length !== 0) {
+      if (price !== undefined) {
+        let trimPrice = price.price
+          .trim()
+          .replaceAll("k", "")
+          .replaceAll(" ", "");
+
+        if (price.price.includes(">")) {
+          let searchPrice = trimPrice.replace(">", "");
+          if (root === undefined) {
+            root = createRoot(document.getElementById("food"));
+          }
+          root.render(
+            (fillter = fillter.filter(
+              (item) =>
+                Number.parseInt(
+                  new Intl.NumberFormat("en-IN", {
+                    maximumSignificantDigits: 3,
+                  }).format(
+                    item.props.food.food_price - item.props.food.food_discount
+                  )
+                ) > Number.parseInt(`${searchPrice},000`)
+            ))
+          );
+        } else if (price.price.includes("-")) {
+          let checkPrice = trimPrice.split("-");
+          let searchPrice1 = Number.parseInt(
+            new Intl.NumberFormat("en-IN", {
+              maximumSignificantDigits: 3,
+            }).format(`${checkPrice[0]}`)
+          );
+          let searchPrice2 = Number.parseInt(
+            new Intl.NumberFormat("en-IN", {
+              maximumSignificantDigits: 3,
+            }).format(`${checkPrice[1]}`)
+          );
+          if (root === undefined) {
+            root = createRoot(document.getElementById("food"));
+          }
+          fillter = fillter.filter((item) => {
+            let priceFilter = Number.parseInt(
+              new Intl.NumberFormat("en-IN", {
+                maximumSignificantDigits: 3,
+              }).format(
+                item.props.food.food_price - item.props.food.food_discount
+              )
+            );
+            return priceFilter >= searchPrice1 && priceFilter <= searchPrice2;
+          });
+          root.render(fillter);
+        } else if (price.price.includes("<")) {
+          let searchPrice = trimPrice.replace("<", "");
+          if (root === undefined) {
+            root = createRoot(document.getElementById("food"));
+          }
+          fillter = fillter.filter(
+            (item) =>
+              Number.parseInt(
+                new Intl.NumberFormat("en-IN", {
+                  maximumSignificantDigits: 3,
+                }).format(
+                  item.props.food.food_price - item.props.food.food_discount
+                )
+              ) < Number.parseInt(`${searchPrice},000`)
+          );
+          root.render(fillter);
+        }
+      }
+      if (type !== undefined) {
+        fillter = fillter.filter(
+          (item) => item.props.food.food_type === type.type
+        );
+        root.render(fillter);
+      }
+
+      if (sta.length !== 0) {
+        sta.forEach((item, index) => {
+          let searchStatus = item.status;
+          if (searchStatus === "Bán Chạy nhất") {
+            fillter = fillter.filter((food) =>
+              food.props.food.food_status.includes("best seller")
+            );
+          } else if (searchStatus === "Bán Online") {
+            fillter = fillter.filter((food) =>
+              food.props.food.food_status.includes("online")
+            );
+          } else if (searchStatus === "Giảm Giá") {
+            fillter = fillter.filter(
+              (food) => Number.parseInt(food.props.food.food_discount) !== 0
+            );
+          } else if (searchStatus === "Món Ăn Theo Mùa") {
+            fillter = fillter.filter((food) =>
+              food.props.food.food_status.includes("seasonal dishes")
+            );
+          } else if (searchStatus === "Món Mới") {
+            fillter = fillter.filter(
+              (food) => food.props.food.food_status === "new dishes"
+            );
+          }
+        });
+        root.render(fillter);
+
+        if (fillter.length === 0) {
+          console.log("Không tìm thấy sản phẩm");
+        }
+      }
+    } else {
+      if (root === undefined) {
+        root = createRoot(document.getElementById("food"));
+      }
+      root.render(renderFoodAll());
+    }
+  }, [prices, types, status]);
+
+  useEffect(() => {
+    if (page === undefined) {
+      page = createRoot(document.getElementById("page"));
+    }
+    let paginations = [];
+    let length = fillter.length / 6;
+    paginations.push(
+      <>
+        <div className="inline-block">
+          <span className="btn flex">
+            <AiOutlineArrowLeft size={24} />
+          </span>
+        </div>
+      </>
+    );
+
+    for (let i = 1; i <= length; i++) {
+      paginations.push(
+        <>
+          <div className="inline-block">
+            <span className="btn flex">{i}</span>
+          </div>
+        </>
+      );
+    }
+
+    paginations.push(
+      <>
+        <div className="inline-block">
+          <span className="btn flex"><AiOutlineArrowRight size={24}/></span>
+        </div>
+      </>
+    );
+    page.render(paginations);
+  }, [fillter]);
 
   return (
     <div className="auth-inner">
@@ -221,52 +407,36 @@ const Menu = () => {
             </div>
           </div>
 
-          <div className="col-sm-8">
+          <div className="col-sm-8 mx-[15px] px-[15px]">
             <div className="flex flex-wrap mb-[-15px]">
               <div className="menu-tabs flex justify-center flex-wrap">
-                <button className="menu-tab-item">All</button>
+                <button
+                  onClick={() => {
+                    handleFoodAll();
+                  }}
+                  className="menu-tab-item"
+                >
+                  All
+                </button>
                 {menuFood.map((item, index) => (
-                  <button className="menu-tab-item" key={index}>
+                  <button
+                    onClick={() => handleClickMenuItem(item.text)}
+                    className="menu-tab-item"
+                    key={index}
+                  >
                     {item.text}
                   </button>
                 ))}
               </div>
             </div>
-            <div className="row box-container">
-                {FoodApi.map((item) => (
-                  <Food key={item.food_id} food={item} />
-                ))}
+            <div className="row box-container" id="food">
+              {renderFoodAll()}
             </div>
-            <div className="action-row flex justify-center items-center">
-              <div className="inline-block">
-                <span className="btn flex">
-                  <AiOutlineArrowLeft size={24} />
-                </span>
-              </div>
-              <div className="inline-block">
-                <span className="highlight">1</span>
-              </div>
-              <div className="inline-block">
-                <span>2</span>
-              </div>
-              <div className="inline-block">
-                <span>3</span>
-              </div>
-              <div className="inline-block">
-                <span>4</span>
-              </div>
-              <div className="inline-block">
-                <span>5</span>
-              </div>
-              <div className="inline-block">
-                <span>6</span>
-              </div>
-              <div className="inline-block">
-                <span className="btn flex">
-                  <AiOutlineArrowRight size={24} />
-                </span>
-              </div>
-            </div>
+
+            <div
+              id="page"
+              className="action-row flex justify-center items-center"
+            ></div>
           </div>
         </div>
       </div>

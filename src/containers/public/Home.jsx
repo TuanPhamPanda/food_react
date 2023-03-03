@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import path from "../../ultis/path";
 import home_img from "../../assets/images/banhmi/banhmi4.jpg";
 import home_parallax_img from "../../assets/images/a.png";

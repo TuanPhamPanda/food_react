@@ -1,4 +1,4 @@
-import { React, useRef } from "react";
+import { React } from "react";
 import logo from "../assets/images/taco-logo.png";
 import { menuHome } from "../ultis/menus";
 import { useNavigate, NavLink } from "react-router-dom";
@@ -31,7 +31,6 @@ const activeStyle =
 
 function Header() {
   const navigate = useNavigate();
-  const user = useRef();
 
   return (
     <div className="header">

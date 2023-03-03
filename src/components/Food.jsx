@@ -4,11 +4,9 @@ import icons from "../ultis/icons";
 const { BsStarFill, BsStarHalf } = icons;
 
 function Food({ food }) {
-  const handleCart = (food) => {
+  const handleCart = (food) => {};
 
-    };
-
-    let img_src = `../assets/images/${food.food_src}`;
+  let img_src = `../assets/images/${food.food_src}`;
 
   let startFull = [];
   let startHaft = food.food_star.split(".")[1];
@@ -52,20 +50,20 @@ function Food({ food }) {
             ) : (
               <>
                 <p>
-                  {`Giá: ${new Intl.NumberFormat("en-IN", {
-                    maximumSignificantDigits: 3,
-                  }).format(food.food_price)} VND`}
-                </p>
-                <span>
                   {`
-                  Giá gốc: ${new Intl.NumberFormat("en-IN", {
+                  Giá: ${new Intl.NumberFormat("en-IN", {
                     maximumSignificantDigits: 3,
                   }).format(food.food_price - food.food_discount)} VND`}
+                </p>
+                <span>
+                  {`Giá gốc: ${new Intl.NumberFormat("en-IN", {
+                    maximumSignificantDigits: 3,
+                  }).format(food.food_price)} VND`}
                 </span>
               </>
             )}
           </div>
-          <button onClick={()=>handleCart(food)} className="btn">
+          <button onClick={() => handleCart(food)} className="btn">
             Thêm vào giỏ hàng
           </button>
         </div>
