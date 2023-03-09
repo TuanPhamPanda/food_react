@@ -27,32 +27,37 @@ export const menuHome = [
 
 export const menuFood = [
     {
-        path: "/banh-mi",
+        end: true,
+        path: "all",
+        text: "All"
+    },
+    {
+        path: "banh-mi",
         text: "Bánh Mì",
         image: banh_mi
     },
     {
-        path: "/bun",
+        path: "bun",
         text: "Bún",
         image: bun
     },
     {
-        path: "/pho",
+        path: "pho",
         text: "Phở",
         image: pho
     },
     {
-        path: "/mon-phu",
+        path: "mon-phu",
         text: "Món Phụ",
         image: mon_phu
     },
     {
-        path: "/trang-mieng",
+        path: "trang-mieng",
         text: "Tráng Miệng",
         image: trang_mieng
     },
     {
-        path: "/thuc-uong",
+        path: "thuc-uong",
         text: "Thức Uống",
         image: thuc_uong
     },

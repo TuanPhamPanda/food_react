@@ -2,13 +2,32 @@ import React, { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { menuFood } from "../../ultis/menus";
 import { Food } from "../../components";
-import icons from "../../ultis/icons";
 import { FoodApi } from "../../apis/FoodApi";
+import ReactPaginate from "react-paginate";
+import icons from "../../ultis/icons";
+import { type } from "@testing-library/user-event/dist/type";
 
-const { AiOutlineArrowLeft, AiOutlineArrowRight } = icons;
 var root, page;
-var fillter = [];
+const { AiOutlineArrowLeft, AiOutlineArrowRight } = icons;
+const itemsPerPage = 6;
 const Menu = () => {
+  const handleClick = (event) => {
+    setActive(event.target.id);
+  };
+
+  const [active, setActive] = useState("");
+  let items = FoodApi;
+  const [fillter, setFillter] = useState([]);
+  const [itemOffset, setItemOffset] = useState(0);
+  let endOffset = itemOffset + itemsPerPage;
+  let currentItems = items.slice(itemOffset, endOffset);
+  let pageCount = Math.ceil(items.length / itemsPerPage);
+
+  const handlePageClick = (event, length) => {
+    const newOffset = (event.selected * itemsPerPage) % length;
+    setItemOffset(newOffset);
+  };
+
   const [status, setStatus] = useState([
     { status: "Bán Chạy nhất" },
     { status: "Bán Online" },
@@ -17,32 +36,31 @@ const Menu = () => {
     { status: "Món Mới" },
   ]);
 
-  const renderFoodAll = () => {
-    return FoodApi.map((item) => <Food key={item.food_id} food={item} />);
-  };
-
   const handleFoodAll = () => {
     hadleCancelPrice();
     hadleCancelType();
-
-    if (root === undefined) {
-      root = createRoot(document.getElementById("food"));
-    }
-    fillter = renderFoodAll();
-
-    root.render(fillter);
+    setFillter(renderFoodAll());
   };
 
   const handleClickMenuItem = (menu) => {
-    if (root === undefined) {
-      root = createRoot(document.getElementById("food"));
-    }
-    let menuItems = renderFoodAll().filter(
-      (item) =>
+    setItemOffset(0);
+
+    const arr = [];
+
+    let menuItems = FoodApi.map((food) => (
+      <Food key={food.food_id} food={food} />
+    )).filter((item) => {
+      return (
         item.props.food.food_category.toLocaleLowerCase() ===
         menu.toLocaleLowerCase()
-    );
-    root.render(menuItems);
+      );
+    });
+
+    setFillter(menuItems);
+  };
+
+  const renderFoodAll = () => {
+    return FoodApi.map((item) => <Food key={item.food_id} food={item} />);
   };
 
   const [newStatus, setNewStatus] = useState([]);
@@ -139,21 +157,91 @@ const Menu = () => {
     let type = types.find((item) => item.isActive === true);
     let sta = status.filter((item) => item.isChecked === true);
 
-    fillter = renderFoodAll();
-    if (price !== undefined || type !== undefined || sta.length !== 0) {
-      if (price !== undefined) {
-        let trimPrice = price.price
-          .trim()
-          .replaceAll("k", "")
-          .replaceAll(" ", "");
+    let arrayTemp = fillter;
 
-        if (price.price.includes(">")) {
-          let searchPrice = trimPrice.replace(">", "");
-          if (root === undefined) {
-            root = createRoot(document.getElementById("food"));
+    if (price !== undefined || type !== undefined || sta.length !== 0) {
+      if (sta.length !== 0) {
+        sta.forEach((item) => {
+          let searchStatus = item.status;
+
+          if (searchStatus.toLowerCase() === "Bán Chạy nhất".toLowerCase()) {
+            arrayTemp = fillter.filter((food) =>
+              food.props.food.food_status.includes("best seller")
+            );
           }
-          root.render(
-            (fillter = fillter.filter(
+
+          if (searchStatus.toLowerCase() === "Bán Online".toLowerCase()) {
+            arrayTemp = arrayTemp.filter((food) => {
+              return food.props.food.food_status.includes("online") === true;
+            });
+          }
+
+          if (searchStatus === "Giảm Giá") {
+            arrayTemp = arrayTemp.filter((food) => {
+              console.log(food);
+              return Number.parseInt(food.props.food.food_discount) !== 0;
+            });
+          }
+
+          if (searchStatus === "Món Ăn Theo Mùa") {
+            arrayTemp = arrayTemp.filter((food) => {
+              return food.props.food.food_status.includes("seasonal dishes");
+            });
+          }
+
+          if (searchStatus === "Món Mới") {
+            arrayTemp = arrayTemp.filter((food) =>
+              food.props.food.food_status.includes("new dishes")
+            );
+          }
+        });
+      }
+
+      let trimPrice = price.price
+        .trim()
+        .replaceAll("k", "")
+        .replaceAll(" ", "");
+
+      if (price.price.includes(">")) {
+        let searchPrice = trimPrice.replace(">", "");
+        arrayTemp = arrayTemp.filter(
+          (item) =>
+            Number.parseInt(
+              new Intl.NumberFormat("en-IN", {
+                maximumSignificantDigits: 3,
+              }).format(
+                item.props.food.food_price - item.props.food.food_discount
+              )
+            ) > Number.parseInt(`${searchPrice},000`)
+        );
+      }
+
+      let checkPrice = trimPrice.split("-");
+      let searchPrice1 = Number.parseInt(
+        new Intl.NumberFormat("en-IN", {
+          maximumSignificantDigits: 3,
+        }).format(`${checkPrice[0]}`)
+      );
+      let searchPrice2 = Number.parseInt(
+        new Intl.NumberFormat("en-IN", {
+          maximumSignificantDigits: 3,
+        }).format(`${checkPrice[1]}`)
+      );
+
+      arrayTemp = arrayTemp.filter((item) => {
+        let priceFilter = Number.parseInt(
+          new Intl.NumberFormat("en-IN", {
+            maximumSignificantDigits: 3,
+          }).format(item.props.food.food_price - item.props.food.food_discount)
+        );
+        return priceFilter >= searchPrice1 && priceFilter <= searchPrice2;
+      });
+
+      /*
+        } else if (price.price.includes("<")) {
+          let searchPrice = trimPrice.replace("<", "");
+          setFillter(
+            fillter.filter(
               (item) =>
                 Number.parseInt(
                   new Intl.NumberFormat("en-IN", {
@@ -161,133 +249,70 @@ const Menu = () => {
                   }).format(
                     item.props.food.food_price - item.props.food.food_discount
                   )
-                ) > Number.parseInt(`${searchPrice},000`)
-            ))
+                ) < Number.parseInt(`${searchPrice},000`)
+            )
           );
-        } else if (price.price.includes("-")) {
-          let checkPrice = trimPrice.split("-");
-          let searchPrice1 = Number.parseInt(
-            new Intl.NumberFormat("en-IN", {
-              maximumSignificantDigits: 3,
-            }).format(`${checkPrice[0]}`)
-          );
-          let searchPrice2 = Number.parseInt(
-            new Intl.NumberFormat("en-IN", {
-              maximumSignificantDigits: 3,
-            }).format(`${checkPrice[1]}`)
-          );
-          if (root === undefined) {
-            root = createRoot(document.getElementById("food"));
-          }
-          fillter = fillter.filter((item) => {
-            let priceFilter = Number.parseInt(
-              new Intl.NumberFormat("en-IN", {
-                maximumSignificantDigits: 3,
-              }).format(
-                item.props.food.food_price - item.props.food.food_discount
-              )
-            );
-            return priceFilter >= searchPrice1 && priceFilter <= searchPrice2;
-          });
-          root.render(fillter);
-        } else if (price.price.includes("<")) {
-          let searchPrice = trimPrice.replace("<", "");
-          if (root === undefined) {
-            root = createRoot(document.getElementById("food"));
-          }
-          fillter = fillter.filter(
-            (item) =>
-              Number.parseInt(
-                new Intl.NumberFormat("en-IN", {
-                  maximumSignificantDigits: 3,
-                }).format(
-                  item.props.food.food_price - item.props.food.food_discount
-                )
-              ) < Number.parseInt(`${searchPrice},000`)
-          );
-          root.render(fillter);
         }
-      }
-      if (type !== undefined) {
-        fillter = fillter.filter(
-          (item) => item.props.food.food_type === type.type
+      } else if (type !== undefined) {
+        setFillter(
+          fillter.filter((item) => item.props.food.food_type === type.type)
         );
-        root.render(fillter);
       }
+      */
 
-      if (sta.length !== 0) {
-        sta.forEach((item, index) => {
-          let searchStatus = item.status;
-          if (searchStatus === "Bán Chạy nhất") {
-            fillter = fillter.filter((food) =>
-              food.props.food.food_status.includes("best seller")
-            );
-          } else if (searchStatus === "Bán Online") {
-            fillter = fillter.filter((food) =>
-              food.props.food.food_status.includes("online")
-            );
-          } else if (searchStatus === "Giảm Giá") {
-            fillter = fillter.filter(
-              (food) => Number.parseInt(food.props.food.food_discount) !== 0
-            );
-          } else if (searchStatus === "Món Ăn Theo Mùa") {
-            fillter = fillter.filter((food) =>
-              food.props.food.food_status.includes("seasonal dishes")
-            );
-          } else if (searchStatus === "Món Mới") {
-            fillter = fillter.filter(
-              (food) => food.props.food.food_status === "new dishes"
-            );
-          }
-        });
-        root.render(fillter);
-
-        if (fillter.length === 0) {
-          console.log("Không tìm thấy sản phẩm");
-        }
-      }
+      
     } else {
-      if (root === undefined) {
-        root = createRoot(document.getElementById("food"));
-      }
-      root.render(renderFoodAll());
+      setFillter(renderFoodAll());
     }
   }, [prices, types, status]);
 
   useEffect(() => {
+
+    console.log(fillter);
+
+    if (root === undefined) {
+      root = createRoot(document.getElementById("food"));
+    }
+
+    endOffset = itemOffset + itemsPerPage;
+    currentItems = fillter.slice(itemOffset, endOffset);
+    pageCount = Math.ceil(fillter.length / itemsPerPage);
+
     if (page === undefined) {
       page = createRoot(document.getElementById("page"));
     }
-    let paginations = [];
-    let length = fillter.length / 6;
-    paginations.push(
-      <>
-        <div className="inline-block">
-          <span className="btn flex">
-            <AiOutlineArrowLeft size={24} />
-          </span>
-        </div>
-      </>
+
+    root.render(
+      currentItems.map((item) => {
+        return <Food key={item.props.food.food_id} food={item.props.food} />;
+      })
     );
 
-    for (let i = 1; i <= length; i++) {
-      paginations.push(
-        <>
-          <div className="inline-block">
-            <span className="btn flex">{i}</span>
-          </div>
-        </>
-      );
+    if (currentItems.length === 0) {
+      root.render(<h1>Không tìm thấy sản phẩm</h1>);
     }
 
-    paginations.push(
-      <>
-        <div className="inline-block">
-          <span className="btn flex"><AiOutlineArrowRight size={24}/></span>
-        </div>
-      </>
+    page.render(
+      <div>
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel={<AiOutlineArrowRight size={30} />}
+          onPageChange={(e) => {
+            handlePageClick(e, (e) => {
+              setItemOffset((e.selected * itemsPerPage) % fillter.length);
+            });
+          }}
+          pageRangeDisplayed={5}
+          pageCount={pageCount}
+          activeClassName="active"
+          containerClassName="pagination"
+          nextClassName="page-num"
+          previousClassName="page-num"
+          previousLabel={<AiOutlineArrowLeft size={30} />}
+          renderOnZeroPageCount={null}
+        />
+      </div>
     );
-    page.render(paginations);
   }, [fillter]);
 
   return (
@@ -327,7 +352,7 @@ const Menu = () => {
                       {item.isChecked && (
                         <button
                           onClick={() => handleCancelStatus(item.status)}
-                          className={`select-btn bg-main-primary text-white`}
+                          className={`select-btn bg-main-primary-green text-white`}
                         >
                           x
                         </button>
@@ -351,9 +376,7 @@ const Menu = () => {
                       <span
                         onClick={() => handleActivePrice(item.price)}
                         className={`flex justify-between text-[16px] ${
-                          item.isActive
-                            ? "bg-main-primary text-white cursor-default"
-                            : "cursor-pointer"
+                          item.isActive ? "cursor-default" : "cursor-pointer"
                         }`}
                       >
                         {item.price}
@@ -361,7 +384,7 @@ const Menu = () => {
                       {item.isActive && (
                         <button
                           onClick={() => hadleCancelPrice()}
-                          className={`select-btn bg-main-primary text-white`}
+                          className={`select-btn bg-main-primary-green text-white`}
                         >
                           x
                         </button>
@@ -385,9 +408,7 @@ const Menu = () => {
                       <span
                         onClick={() => handleActiveType(item.type)}
                         className={`flex justify-between text-[16px] ${
-                          item.isActive
-                            ? "bg-main-primary text-white cursor-default"
-                            : "cursor-pointer"
+                          item.isActive ? "cursor-default" : "cursor-pointer"
                         }`}
                       >
                         {item.type}
@@ -395,7 +416,7 @@ const Menu = () => {
                       {item.isActive && (
                         <button
                           onClick={() => hadleCancelType()}
-                          className={`select-btn bg-main-primary text-white`}
+                          className={`select-btn bg-main-primary-green text-white`}
                         >
                           x
                         </button>
@@ -410,19 +431,21 @@ const Menu = () => {
           <div className="col-sm-8 mx-[15px] px-[15px]">
             <div className="flex flex-wrap mb-[-15px]">
               <div className="menu-tabs flex justify-center flex-wrap">
-                <button
-                  onClick={() => {
-                    handleFoodAll();
-                  }}
-                  className="menu-tab-item"
-                >
-                  All
-                </button>
                 {menuFood.map((item, index) => (
                   <button
-                    onClick={() => handleClickMenuItem(item.text)}
-                    className="menu-tab-item"
+                    id={index}
                     key={index}
+                    className={
+                      active == index
+                        ? "mx-3 menu-tab-item bg-main-primary-orange"
+                        : "mx-3 menu-tab-item bg-main-primary-green"
+                    }
+                    onClick={(e) => {
+                      handleClick(e);
+                      item.text === "All"
+                        ? handleFoodAll()
+                        : handleClickMenuItem(item.text);
+                    }}
                   >
                     {item.text}
                   </button>
@@ -430,13 +453,27 @@ const Menu = () => {
               </div>
             </div>
             <div className="row box-container" id="food">
-              {renderFoodAll()}
+              {currentItems.map((item) => (
+                <Food key={item.food_id} food={item} />
+              ))}
             </div>
-
-            <div
-              id="page"
-              className="action-row flex justify-center items-center"
-            ></div>
+            <div id="page">
+              <ReactPaginate
+                breakLabel="..."
+                nextLabel={<AiOutlineArrowRight size={30} />}
+                onPageChange={(e) => {
+                  handlePageClick(e, items.length);
+                }}
+                pageRangeDisplayed={5}
+                pageCount={pageCount}
+                activeClassName="active"
+                containerClassName="pagination"
+                nextClassName="page-num"
+                previousClassName="page-num"
+                previousLabel={<AiOutlineArrowLeft size={30} />}
+                renderOnZeroPageCount={null}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -65,11 +65,11 @@ function Header() {
           onClick={() => {
             navigate("/cart");
           }}
-          className="hover:bg-[#27ae60] p-4 cursor-pointer"
+          className="hover:bg-main-primary-green p-4 cursor-pointer"
         >
           <FaShoppingCart size={24} />
         </div>
-        <div className="hover:bg-[#27ae60] p-4 cursor-pointer">
+        <div className="hover:bg-main-primary-green p-4 cursor-pointer">
           <span className="relative">
             <FaUser size={24} />
           </span>

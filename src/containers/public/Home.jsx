@@ -38,7 +38,7 @@ const Home = () => {
       </div>
 
       <div className="home-category justify-center items-center">
-        {menuFood.map((item) => (
+        {menuFood.filter(item => item.text !== "All").map((item =>
           <NavLink
             to={`menu/${item.path}`}
             className="box text-center flex flex-col"

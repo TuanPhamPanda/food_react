@@ -9,8 +9,8 @@ function Food({ food }) {
   let img_src = `../assets/images/${food.food_src}`;
 
   let startFull = [];
-  let startHaft = food.food_star.split(".")[1];
-  for (let i = 0; i < food.food_star.split(".")[0]; i++) {
+  let startHaft = food.food_star?.split(".")[1];
+  for (let i = 0; i < food.food_star?.split(".")[0]; i++) {
     startFull.push(<BsStarFill />);
   }
 

@@ -6,7 +6,7 @@ const Public = () => {
   return (
     <>
       <Header />
-      <div className="auth-wrapper">
+      <div id="auth-wrapper">
         <Outlet />
       </div>
       <Footer />
