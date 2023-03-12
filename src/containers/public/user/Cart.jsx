@@ -1,8 +1,11 @@
-import React from "react";
-import banhmi from "../../assets/images/banhmi/banhmi1.png";
+import React, { useState } from "react";
+import banhmi from '../../../assets/images/banhmi/banhmi1.png';
 import { NavLink } from "react-router-dom";
 
 const Cart = () => {
+  const [count, setCount] = useState(1);
+
+
   return (
     <div className="auth-inner">
       <div className="shopping-cart-section">
@@ -71,21 +74,22 @@ const Cart = () => {
                           </p>
                         </div>
 
-                        <div className="item-qty col-sm-2 w-full flex">
+                        <div className="item-qty col-sm-2 w-full flex gap-2">
                           <label
-                            for="iQuantity"
+                            htmlFor="iQuantity"
                             className="flex-none"
-                            style={{ fontSize: "12px", paddingRight: "2px" }}
+                            style={{ fontSize: "12px" }}
                           >
                             Số lượng:
                           </label>
                           <input
-                            value={1}
-                            type="number"
+                            onChange={(e)=>setCount(e.target.value)}
                             id="iQuantity"
-                            className="form-control item-quantity text-right h-[15px] border-blue-500"
+                            value={count}
+                            type="number"
+                            className="form-control item-quantity text-center h-[15px] border-blue-500"
                             min="1"
-                            max="50"
+                            max="10"
                           />
                         </div>
 
@@ -147,7 +151,10 @@ const Cart = () => {
                 </div>
 
                 <div className="box">
-                  <div style={{padding: "12px 0px"}} className="box-content text-center flex flex-col">
+                  <div
+                    style={{ padding: "12px 0px" }}
+                    className="box-content text-center flex flex-col"
+                  >
                     <h3 className="border-solid border-b w-full border-0 mb-4 border-gray-300">
                       Hỗ Trợ
                     </h3>

@@ -1,27 +1,9 @@
-import { React } from "react";
+import { React, useState } from "react";
 import logo from "../assets/images/taco-logo.png";
 import { menuHome } from "../ultis/menus";
 import { useNavigate, NavLink } from "react-router-dom";
-import path from "../ultis/path";
+import {path} from "../ultis/path";
 import icons from "../ultis/icons";
-
-{/* <ul ref={user} className="user absolute top-[100%] right-0 left-0 z-10">
-            <li className="flex flex-col py-8 gap-4 min-w-max text-[13px]">
-              <NavLink
-                to={navigate("/login")}
-                className="p-4 cursor-pointer hover:bg-[#f38609]"
-              >
-                Đăng nhập
-              </NavLink>
-              <NavLink
-                to={navigate("/register")}
-                className="p-4 cursor-pointer hover:bg-[#f38609]"
-              >
-                Đăng ký
-              </NavLink>
-            </li>
-          </ul> */}
-
 
 const { FaShoppingCart, FaUser } = icons;
 const notActiveStyle =
@@ -31,6 +13,7 @@ const activeStyle =
 
 function Header() {
   const navigate = useNavigate();
+  
 
   return (
     <div className="header">
@@ -60,7 +43,7 @@ function Header() {
           </NavLink>
         ))}
       </nav>
-      <div className="flex justify-center items-center gap-4">
+      <div className="flex gap-4">
         <div
           onClick={() => {
             navigate("/cart");
@@ -69,10 +52,23 @@ function Header() {
         >
           <FaShoppingCart size={24} />
         </div>
-        <div className="hover:bg-main-primary-green p-4 cursor-pointer">
-          <span className="relative">
-            <FaUser size={24} />
-          </span>
+        
+        <div className="cursor-pointer relative p-10 hover:bg-main-primary-green">
+          <div className="nav flex flex-col w-full">
+            <span className="p-4">
+              <FaUser size={26} />
+            </span>
+              <ul>
+                <li className="flex w-full flex-col text-[13px] justify-end">
+                  <NavLink to={"/login"} className="mt-2 p-4 cursor-pointer hover:bg-[#f38609]">
+                    Đăng nhập
+                  </NavLink>
+                  <NavLink to={"/register"} className="p-4 cursor-pointer hover:bg-[#f38609]">
+                    Đăng ký
+                  </NavLink>
+                </li>
+              </ul>
+          </div>
         </div>
       </div>
     </div>

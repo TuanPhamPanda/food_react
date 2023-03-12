@@ -1,15 +1,15 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import path from "../../ultis/path";
-import home_img from "../../assets/images/banhmi/banhmi4.jpg";
-import home_parallax_img from "../../assets/images/a.png";
-import banner1 from "../../assets/images/banhmi/banhmi4.png";
-import home_about from "../../assets/images/mav.png";
-import chuyen_phat_nhanh from "../../assets/images/serv-1.png";
-import thuc_an_sach from "../../assets/images/serv-2.png";
-import chat_luong_tot from "../../assets/images/serv-3.png";
-import ho_tro_24_7 from "../../assets/images/serv-4.png";
-import { menuFood } from "../../ultis/menus";
+import {path} from "../../../ultis/path";
+import home_img from "../../../assets/images/banhmi/banhmi4.jpg";
+import home_parallax_img from "../../../assets/images/a.png";
+import banner1 from "../../../assets/images/banhmi/banhmi4.png";
+import home_about from "../../../assets/images/mav.png";
+import chuyen_phat_nhanh from "../../../assets/images/serv-1.png";
+import thuc_an_sach from "../../../assets/images/serv-2.png";
+import chat_luong_tot from "../../../assets/images/serv-3.png";
+import ho_tro_24_7 from "../../../assets/images/serv-4.png";
+import { menuFood } from "../../../ultis/menus";
 
 const Home = () => {
   return (

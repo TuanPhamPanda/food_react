@@ -1,7 +1,7 @@
 import React from "react";
-import icon_1 from "../../assets/images/icon-1.png";
-import icon_2 from "../../assets/images/icon-2.png";
-import icon_3 from "../../assets/images/icon-3.png";
+import icon_1 from "../../../assets/images/icon-1.png";
+import icon_2 from "../../../assets/images/icon-2.png";
+import icon_3 from "../../../assets/images/icon-3.png";
 
 const Table = () => {
 

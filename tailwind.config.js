@@ -10,11 +10,11 @@ module.exports = {
         '175': '1.75',
       },
       backgroundColor: {
-        "main-primary-green": "#27ae60",
+        "main-primary-green": "#27AE60",
         "main-primary-orange": "#f38609"
       },
       colors:{
-        "text-primary-green":"#27ae60"
+        "primary-green":"#27ae60"
       }
     },
   },

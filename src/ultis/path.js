@@ -1,4 +1,4 @@
-const path = {
+export const path = {
     PUBLIC: "/",
     HOME: "",
     ABOUT: "about",
@@ -12,4 +12,10 @@ const path = {
     START: "*",
 }
 
-export default path;
+export const pathAdmin = {
+    LISTFOOD: "/admin/",
+    ADDFOOD: "/admin/addFood",
+    EDITFOOD: "/admin/editFood/:id_food",
+    PUBLIC: "/admin/",
+    START: "*",
+}

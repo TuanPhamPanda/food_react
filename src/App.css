@@ -1,5 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Satisfy&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap");
 
 * {
   font-family: "Poppins", sans-serif;
@@ -8,7 +8,6 @@
   box-sizing: border-box;
   outline: none;
   border: none;
-  text-decoration: none;
   text-transform: capitalize;
   transition: 0.2s linear;
 }
@@ -105,7 +104,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2rem 9%;
+  padding: 1.3rem 9%;
 }
 
 .header .logo {
@@ -151,6 +150,28 @@ html {
   position: absolute;
   margin-left: -50px;
   list-style-type: none;
+}
+
+.header .nav ul{
+  display: none;
+  justify-content: start;
+}
+
+.header .nav:hover ul{
+  min-width: max-content;
+  display: flex;
+}
+
+.header .nav:hover span{
+  width: min-content;
+  background-color: rgb(39 174 96) /1;
+}
+
+.header .nav {
+  position: absolute;
+  top: 0;
+  right: 0;
+  max-width: 160px;
 }
 
 .header .icons .account .drop-down-select a {
@@ -950,7 +971,7 @@ hr {
 }
 
 .item-quantity{
-  width: 36px;
+  width: 50px;
 }
 
 #iQuantity:focus{
@@ -988,6 +1009,85 @@ hr {
   gap: 6px;
   font-size: 16px;
 }
+
+
+
+.modal{
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(56, 54, 54, 0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-container{
+  background: white;
+  position: relative;
+  width: 800px;
+  min-height: 350px;
+  animation: modalShow ease .6s;
+}
+
+.modal-header{
+  height: 80px;
+  background-color: #27AE60;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-heading-text{
+  margin-left: 8px;
+  font-weight: 400;
+  font-family: "Segoe UI",Arial,sans-serif;
+}
+
+.modal-close{
+  position: absolute;
+  cursor: pointer;
+  right: 0;
+  top: 0;
+  padding: 16px;
+  opacity: 0.7;
+}
+
+.modal-close:hover{
+  background-color: #ccc;
+  opacity: 1;
+  font-size: 20px;
+}
+
+.modal-body{
+  padding: 16px;
+}
+
+.modal-body-icon{
+  display: block;
+}
+
+.modal-label{
+  display: inline-block;
+  font-size: 15px;   
+  margin-bottom: 12px;
+}
+
+.modal-input{
+  display: block;
+  width: 100%;
+  padding: 8px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  margin-bottom: 24px;
+}
+
+.modal.open{
+  display: flex;
+}
+
 
 .footer {
   background: #f7f7f7;
@@ -1096,6 +1196,44 @@ hr {
 .footer .bottom .share a:hover {
   background: #130f40;
 }
+
+.form{
+  width: 400px;
+  height: 300px;
+}
+
+.form .email, 
+.form .password{
+  border: 1px solid #ccc;
+}
+
+.form .email:focus, 
+.form .password:focus{
+  border: 1px solid rgb(116, 187, 249);
+  border-radius: 5%;
+}
+
+.list-food{
+  padding: 2rem 6%;
+}
+
+.table-food tr th,
+.table-food tr td{
+  border: 1px solid  rgb(147 197 253);
+} 
+
+.table-food tbody span {
+  cursor: pointer;
+}
+
+.table-food tbody span:first-child{
+  color: rgb(249 115 22);
+}
+
+.table-food tbody span:last-child{
+  color: rgb(249, 48, 22);
+}
+
 
 @media (max-width: 768px) {
 
@@ -1370,5 +1508,15 @@ hr {
 
   .footer .box-container {
     grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+}
+
+@keyframes modalShow{
+  from{
+      opacity: 0;
+      transform: translateY(-100%);
+  }to{
+      opacity: 1;
+      transform: translateY(0);
   }
 }

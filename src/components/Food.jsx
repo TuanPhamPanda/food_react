@@ -1,10 +1,24 @@
-import React from "react";
+import React, {memo} from "react";
 import icons from "../ultis/icons";
 
 const { BsStarFill, BsStarHalf } = icons;
 
-function Food({ food }) {
-  const handleCart = (food) => {};
+function Food({ food, cart }) {
+  const modal = document.querySelector(".modal");
+  const modalClose = document.querySelector(".modal-close");
+
+  modalClose?.addEventListener("click", hideModal);
+  function hideModal() {
+    modal.classList.remove("open");
+  }
+
+  modal?.addEventListener('click', hideModal);
+
+  const handleCart = (food) => {
+    cart(food);
+    modal.classList.add("open");
+  };
+
 
   let img_src = `../assets/images/${food.food_src}`;
 
@@ -72,4 +86,4 @@ function Food({ food }) {
   );
 }
 
-export default Food;
+export default memo(Food);
