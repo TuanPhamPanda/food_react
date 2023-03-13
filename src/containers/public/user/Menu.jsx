@@ -545,7 +545,7 @@ const Menu = () => {
                 <label htmlFor="iQuantity">
                   Số lượng:{" "}
                   <input
-                    className="text-center"
+                    className="text-center focus"
                     id="iQuantity"
                     type="number"
                     onChange={(e) => setCount(e.target.value)}

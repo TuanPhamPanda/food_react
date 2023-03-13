@@ -87,7 +87,7 @@ const Cart = () => {
                             id="iQuantity"
                             value={count}
                             type="number"
-                            className="form-control item-quantity text-center h-[15px] border-blue-500"
+                            className="focus form-control item-quantity text-center h-[15px] border-blue-500"
                             min="1"
                             max="10"
                           />

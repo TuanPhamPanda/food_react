@@ -974,9 +974,13 @@ hr {
   width: 50px;
 }
 
-#iQuantity:focus{
-  border: 1px solid rgb(59 130 246/1);
+.focus{
   border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.focus:focus{
+  border: 1px solid rgb(59 130 246/1);
 }
 
 .first-price {
@@ -1232,6 +1236,32 @@ hr {
 
 .table-food tbody span:last-child{
   color: rgb(249, 48, 22);
+}
+
+.add-food{
+  font-size: large;
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+  gap: 2rem;
+}
+
+.add-food .item{
+  display: flex;
+  gap: 2rem;
+  justify-content: left;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.add-food > .item:first-child{
+  margin-top: 0;
+}
+
+.add-food > .item > div{
+  width: 33.333%;
+  margin: 0 10px;
+  display: flex;
 }
 
 
