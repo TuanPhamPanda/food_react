@@ -15,7 +15,7 @@ export const path = {
 export const pathAdmin = {
     LISTFOOD: "/admin/",
     ADDFOOD: "/admin/addFood",
-    EDITFOOD: "/admin/editFood/:id_food",
+    EDITFOOD: "/admin/editFood/:food_id",
     PUBLIC: "/admin/",
     START: "*",
 }

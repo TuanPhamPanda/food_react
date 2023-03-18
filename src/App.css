@@ -1,8 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Satisfy&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,100&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Explora&display=swap');
 
 * {
-  font-family: "Poppins", sans-serif;
+  font-family: "Roboto", sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -1202,17 +1202,24 @@ hr {
 }
 
 .form{
-  width: 400px;
-  height: 300px;
+  min-width: 400px;
+  height: fit-content;
+  margin-bottom: 12px;
 }
 
-.form .email, 
-.form .password{
-  border: 1px solid #ccc;
+.form input, .form select{
+  font-family: 'Times New Roman', "Roboto", serif;
+  border: 1px solid #ccc;border: 1px solid #ccc;
+  text-transform: none;
+  padding: 1rem 1.8rem;
 }
 
-.form .email:focus, 
-.form .password:focus{
+.form select{
+  padding: 1rem 0;
+}
+
+.form input:focus{
+  text-transform: none;
   border: 1px solid rgb(116, 187, 249);
   border-radius: 5%;
 }
@@ -1262,6 +1269,12 @@ hr {
   width: 33.333%;
   margin: 0 10px;
   display: flex;
+}
+
+.title{
+  font-family: "Explora", cursive;
+  font-size: 32px;
+  padding: 4px 0;
 }
 
 

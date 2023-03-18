@@ -1,13 +1,17 @@
 import React from "react";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import { createRoot } from 'react-dom/client';
-import "./index.css";
-import "./App.css";
+import { createRoot } from "react-dom/client";
+import { PersistGate } from "redux-persist/integration/react";
+import reduxConfig from "./redux";
+import { Provider } from "react-redux";
 
-const root = createRoot(document.getElementById('root')); 
+const { store, persiststore } = reduxConfig();
+const root = createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </BrowserRouter>
 );

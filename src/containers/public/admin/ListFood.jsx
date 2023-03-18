@@ -2,8 +2,12 @@ import React from "react";
 import { FoodApi } from "../../../apis/FoodApi";
 import icons from "../../../ultis/icons";
 import { NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { title } from "../../../ultis/title";
 
 const ListFood = () => {
+  document.title = title.listFood;
+  const dispatch = useDispatch();
   const { AiTwotoneEdit, AiFillDelete } = icons;
 
   const handleDeleteFood = (food) => {
@@ -38,7 +42,7 @@ const ListFood = () => {
               <td>{`${new Intl.NumberFormat("en-IN", {
                 maximumSignificantDigits: 3,
               }).format(item.food_price)} VND`}</td>
-              <td>100%</td>
+              <td>{`${ ((item.food_discount / item.food_price)*100) === 0 ? "0" : ((item.food_discount / item.food_price)*100).toFixed(3) }%`}</td>
               <td>{`${new Intl.NumberFormat("en-IN", {
                 maximumSignificantDigits: 3,
               }).format(item.food_discount)} VND`}</td>

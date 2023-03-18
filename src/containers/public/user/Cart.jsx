@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import banhmi from '../../../assets/images/banhmi/banhmi1.png';
 import { NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { title } from "../../../ultis/title";
 
 const Cart = () => {
+  document.title = title.cart;
   const [count, setCount] = useState(1);
-
+  const dispatch = useDispatch();
 
   return (
     <div className="auth-inner">

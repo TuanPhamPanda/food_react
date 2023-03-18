@@ -10,9 +10,10 @@ import pho6 from '../../../assets/images/anhkremove/pho6.jpg'
 import tu5 from '../../../assets/images/anhkremove/tu5.jpg'
 import tm4 from '../../../assets/images/anhkremove/tm4.jpg'
 import tm7 from '../../../assets/images/anhkremove/tm7.jpg'
-
+import { title } from "../../../ultis/title";
 
 function About() {
+  document.title = title.about;
   return (
     <div className="auth-wrapper">
       <div className="auth-inner">

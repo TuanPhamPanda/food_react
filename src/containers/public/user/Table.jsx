@@ -2,8 +2,11 @@ import React from "react";
 import icon_1 from "../../../assets/images/icon-1.png";
 import icon_2 from "../../../assets/images/icon-2.png";
 import icon_3 from "../../../assets/images/icon-3.png";
+import { useDispatch } from "react-redux";
+import { title } from "../../../ultis/title";
 
 const Table = () => {
+  document.title = title.table;  
 
   const handleBook = (e) => {
     alert(123);

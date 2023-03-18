@@ -10,8 +10,11 @@ import thuc_an_sach from "../../../assets/images/serv-2.png";
 import chat_luong_tot from "../../../assets/images/serv-3.png";
 import ho_tro_24_7 from "../../../assets/images/serv-4.png";
 import { menuFood } from "../../../ultis/menus";
+import { title } from "../../../ultis/title";
 
 const Home = () => {
+  document.title = title.home;
+  
   return (
     <div className="">
       <div className="home-main">

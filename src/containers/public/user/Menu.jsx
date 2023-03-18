@@ -2,9 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { menuFood } from "../../../ultis/menus";
 import { Food } from "../../../components";
-import { FoodApi } from "../../../apis/FoodApi";
+//import { FoodApi } from "../../../apis/FoodApi";
 import ReactPaginate from "react-paginate";
 import icons from "../../../ultis/icons";
+import { useSelector } from "react-redux";
+import {actionTypesFood} from '../../../store/actions/actionTypes';
+import { title } from "../../../ultis/title";
 
 var root, page;
 const {
@@ -15,6 +18,10 @@ const {
 } = icons;
 const itemsPerPage = 6;
 const Menu = () => {
+
+  document.title = title.menu;
+
+  const { FoodApi } = useSelector((state) => state.app);  
   const [count, setCount] = useState(1);
 
   const handleClick = (event) => {

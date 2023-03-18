@@ -20,7 +20,7 @@ function Food({ food, cart }) {
   };
 
 
-  let img_src = `../assets/images/${food.food_src}`;
+  let img_src = `http://localhost:8081/images/${food.food_src}`;
 
   let startFull = [];
   let startHaft = food.food_star?.split(".")[1];

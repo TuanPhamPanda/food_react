@@ -1,17 +1,25 @@
-import React, { useEffect, useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState, useRef } from "react";
 import { menuFood } from "../../../ultis/menus";
+import {toast} from "react-toastify";
+import { useDispatch } from "react-redux";
+import {title} from "../../../ultis/title";
 
 const AddFood = () => {
-  document.title = "Thêm món ăn";
+
+  document.title = title.addFood;
+  const [error, setError] = useState("");
   const [imageFood, setImageFood] = useState();
   const [sta, setSta] = useState([]);
   const [type, setType] = useState(1);
   const [foodName, setFoodName] = useState("");
-  const [foodPrice, setFoodPrice] = useState("0");
+  const [foodPrice, setFoodPrice] = useState("");
   const [promotion, setPromotion] = useState(0);
   const [foodDiscount, setFoodDiscount] = useState(0);
   const [foodDescription, setFoodDescription] = useState("");
-  const [foodCategory, setFoodCategory] = useState("");
+  const [foodCategory, setFoodCategory] = useState(
+    menuFood.filter((item) => !item.end)[0].text
+  );
   const VND = new Intl.NumberFormat();
 
   const status = [
@@ -20,19 +28,20 @@ const AddFood = () => {
     { id: 3, text: "Món Ăn Theo Mùa", value: "seasonal dishes" },
     { id: 4, text: "Món Mới", value: "new dishes" },
   ];
+  
   const types = [
     { id: 1, type: "Mặn" },
     { id: 2, type: "Chay" },
   ];
 
-  const handleCheckedStatus = (id) => {
+  const handleCheckedStatus = (value) => {
     setSta((prev) => {
-      const isChecked = sta.includes(id);
+      const isChecked = sta.includes(value);
 
       if (isChecked) {
-        return sta.filter((item) => item !== id);
+        return sta.filter((item) => item !== value);
       } else {
-        return [...prev, id];
+        return [...prev, value];
       }
     });
   };
@@ -43,23 +52,51 @@ const AddFood = () => {
     setImageFood(file);
   };
 
-  const handleAddFood = () => {
+  const handleAddFood = (e) => {
+    if (
+      foodName.length === 0 ||
+      foodPrice.length === 0 ||
+      foodDescription.length === 0 ||
+      imageFood === undefined
+    ) {
+      setError("Vui lòng nhập đầy đủ thông tin");
+    } else {
+      setError("");
+      const food = {
+        food_name: foodName,
+        food_star: "",
+        food_vote: "",
+        food_price: foodPrice,
+        food_discount: foodDiscount,
+        food_desc: foodDescription,
+        food_status: sta.length === 0 ? "normal": sta.toString().replaceAll(',', ' '),
+        food_type: types.find((item) => item.id === type).type,
+        food_category: foodCategory,
+        food_src: imageFood.name,
+      };
+      let formData = new FormData();
 
-    console.log(foodCategory);
+      formData.append("food", JSON.stringify(food));
+      formData.set("food_src", imageFood);
 
-    const food = {
-      food_name: foodName,
-      food_star: "",
-      food_vote: "",
-      food_price: foodPrice,
-      food_discount: foodDiscount,
-      food_desc: foodDescription,
-      food_status: "...",
-      food_type: types.find(item=>item.id === type).type,
-      food_category: foodCategory,
-      food_src : ""
+      toast.success('THêm thành công');
+
+      /*
+      axios({
+        method: "post",
+        url: "http://localhost:8081/api/foods",
+        data: formData,
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+        */
     }
-  }
+  };
 
   useEffect(() => {
     return () => {
@@ -68,7 +105,7 @@ const AddFood = () => {
   }, [imageFood]);
 
   useEffect(() => {
-    setFoodDiscount(VND.format((foodPrice - (foodPrice * promotion)/100)));
+    setFoodDiscount(VND.format(foodPrice - (foodPrice * promotion) / 100));
   }, [promotion, foodPrice]);
 
   return (
@@ -155,10 +192,10 @@ const AddFood = () => {
                   className="cursor-pointer flex gap-4"
                 >
                   <input
-                    onChange={() => handleCheckedStatus(item.id)}
+                    onChange={() => handleCheckedStatus(item.value)}
                     id={item.value}
                     type="checkbox"
-                    checked={sta.includes(item.id)}
+                    checked={sta.includes(item.value)}
                   />
                   {item.text}
                 </label>
@@ -206,18 +243,25 @@ const AddFood = () => {
         <div className="item">
           <div className="flex items-center gap-4">
             <span className="flex-none">Chọn hình</span>
+
             <input
+              multiple
+              accept="image/*"
               type="file"
               className="w-[220px]"
               onChange={(e) => handleChooseImageFood(e)}
             />
+
             {imageFood && (
               <img src={imageFood.preview} width={150} height={150} alt="" />
             )}
           </div>
         </div>
+        <span className="flex text-red-400 w-full">{error}</span>
         <div className="w-full flex justify-center">
-          <button onClick={() => handleAddFood()} className="btn mt-4 w-1/2">Thêm</button>
+          <button onClick={(e) => handleAddFood(e)} className="btn mt-4 w-1/2">
+            Thêm
+          </button>
         </div>
       </div>
     </div>

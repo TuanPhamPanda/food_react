@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
 import { path, pathAdmin } from "./ultis/path";
 import {
   Home,
@@ -10,10 +11,26 @@ import {
   About,
   Menu,
 } from "./containers/public/user";
-import { ListFood, AddFood, EditFood, PublicAdmin} from "./containers/public/admin";
+import {
+  ListFood,
+  AddFood,
+  EditFood,
+  PublicAdmin,
+} from "./containers/public/admin";
 import { Route, Routes } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import "./index.css";
+import "./App.css";
+import { useDispatch } from "react-redux";
+import * as action from './store/actions';
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(action.getFood());
+  }, []);
+
   return (
     <div>
       <Routes>
@@ -34,6 +51,19 @@ const App = () => {
           <Route path={path.START} element={<ListFood />} />
         </Route>
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <ToastContainer />
     </div>
   );
 };
