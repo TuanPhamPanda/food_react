@@ -1,12 +1,14 @@
 import React from "react";
-import { FoodApi } from "../../../apis/FoodApi";
 import icons from "../../../ultis/icons";
 import { NavLink } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { title } from "../../../ultis/title";
 
 const ListFood = () => {
   document.title = title.listFood;
+  
+  const { FoodApi } = useSelector((state) => state.app); 
+
   const dispatch = useDispatch();
   const { AiTwotoneEdit, AiFillDelete } = icons;
 
@@ -53,7 +55,7 @@ const ListFood = () => {
               <td>
                 <img
                   className="w-[100px] h-[100px] m-auto"
-                  src={`../../../assets/images/${item.food_src}`}
+                  src={`${process.env.REACT_APP_FOOD_API}/images/${item.food_src}`}
                   alt=""
                 />
               </td>

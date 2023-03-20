@@ -1,11 +1,12 @@
-import axios from "axios";
+import axios from "../axios";
 
-export const showUser = (email, password) =>
+export const showUser = (formData) =>
   new Promise(async (resolve, reject) => {
     try {
       const reponse = await axios({
-        url: `/users/${email}/${password}`,
-        method: "get",
+        url: '/users/',
+        method: "post",
+        data: formData
       });
       resolve(reponse);
     } catch (error) {

@@ -1,10 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { menuFood } from "../../../ultis/menus";
 import { toast } from "react-toastify";
-import { FoodApi } from "../../../apis/FoodApi.js";
 import { title } from "../../../ultis/title";
+import { useSelector } from "react-redux";
 
 const status = [
   { id: 1, text: "Bán Chạy nhất", value: "best seller" },
@@ -18,11 +18,14 @@ const types = [
 ];
 
 const EditFood = () => {
+  const { FoodApi } = useSelector((state) => state.app);
   document.title = title.editFood;
   const navigate = useNavigate();
   const url = window.location.pathname;
   const id = +url.substring(url.lastIndexOf("/") + 1, url.length);
   const food = FoodApi.find((item) => item.food_id === id);
+  const foodImageSourse =
+    process.env.REACT_APP_FOOD_API + `/images/${food.food_src}`;
 
   const [error, setError] = useState("");
   const [type, setType] = useState(() => {
@@ -42,6 +45,7 @@ const EditFood = () => {
       .map((item) => item.value)
       .filter((item) => food.food_status.toLowerCase().includes(item));
   });
+
   const [imageFood, setImageFood] = useState();
 
   const [foodCategory, setFoodCategory] = useState(
@@ -69,43 +73,44 @@ const EditFood = () => {
   };
 
   const handleCancelFood = () => {
-    navigate('/admin/');
-  }
+    navigate("/admin/");
+  };
 
-  const handleAddFood = (e) => {
+  const handleEditFood = (e) => {
     if (
       foodName.length === 0 ||
       foodPrice.length === 0 ||
-      foodDescription.length === 0 ||
-      imageFood === undefined
+      foodDescription.length === 0
     ) {
       setError("Vui lòng nhập đầy đủ thông tin");
     } else {
-      setError("");
-      const food = {
+      const foodTemp = {
         food_name: foodName,
-        food_star: "",
-        food_vote: "",
-        food_price: foodPrice,
+        food_star: food.food_star,
+        food_vote: food.food_vote,
+        food_price: VND.format(foodPrice),
         food_discount: foodDiscount,
         food_desc: foodDescription,
         food_status:
           sta.length === 0 ? "normal" : sta.toString().replaceAll(",", " "),
         food_type: types.find((item) => item.id === type).type,
         food_category: foodCategory,
-        food_src: imageFood.name,
       };
+      if (imageFood !== undefined) {
+        food.food_src = imageFood.name;
+      }
+      setError("");
       let formData = new FormData();
 
-      formData.append("food", JSON.stringify(food));
+      formData.append("food", JSON.stringify(foodTemp));
       formData.set("food_src", imageFood);
 
       toast.success("Sửa thành công");
-
+      console.log(foodTemp);
       /*
       axios({
-        method: "post",
-        url: "http://localhost:8081/api/foods",
+        method: "put",
+        url: "http://localhost:8081/api/foods/" + food.food_id,
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
       })
@@ -273,21 +278,25 @@ const EditFood = () => {
               onChange={(e) => handleChooseImageFood(e)}
             />
 
-            {imageFood && (
+            {imageFood === undefined ? (
+              <img src={foodImageSourse} width={150} height={150} alt="" />
+            ) : (
               <img src={imageFood.preview} width={150} height={150} alt="" />
             )}
           </div>
         </div>
         <span className="flex text-red-400 w-full">{error}</span>
         <div className="w-full flex justify-evenly">
-          <button onClick={(e) => handleAddFood(e)} className="btn mt-4 w-1/4">
+          <button onClick={(e) => handleEditFood(e)} className="btn mt-4 w-1/4">
             Sửa
           </button>
 
-          <button onClick={(e) => handleCancelFood()} className="btn mt-4 w-1/4">
+          <button
+            onClick={(e) => handleCancelFood()}
+            className="btn mt-4 w-1/4"
+          >
             Quay lại
           </button>
-
         </div>
       </div>
     </div>

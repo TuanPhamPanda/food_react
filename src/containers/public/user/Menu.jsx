@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { menuFood } from "../../../ultis/menus";
 import { Food } from "../../../components";
-//import { FoodApi } from "../../../apis/FoodApi";
 import ReactPaginate from "react-paginate";
 import icons from "../../../ultis/icons";
 import { useSelector } from "react-redux";
-import {actionTypesFood} from '../../../store/actions/actionTypes';
+import { actionTypesFood } from "../../../store/actions/actionTypes";
 import { title } from "../../../ultis/title";
+import { NavLink } from "react-router-dom";
 
 var root, page;
 const {
@@ -18,10 +18,9 @@ const {
 } = icons;
 const itemsPerPage = 6;
 const Menu = () => {
-
   document.title = title.menu;
 
-  const { FoodApi } = useSelector((state) => state.app);  
+  const { FoodApi } = useSelector((state) => state.app);
   const [count, setCount] = useState(1);
 
   const handleClick = (event) => {
@@ -36,20 +35,17 @@ const Menu = () => {
 
   const handleAddToCart = () => {
     alert(12345);
-  };  
+  };
 
-  let img_src = `../../assets/images/${cart.food_src}`;
+  let img_src = `${process.env.REACT_APP_FOOD_API}/images/${cart.food_src}`;
 
   const modalContainer = document.querySelector(".modal-container");
 
   modalContainer?.addEventListener("click", function (event) {
     event.stopPropagation();
   });
-  
-  const [user, setUser] = useState(() => {
-    const storage = localStorage.getItem("user");
-    return storage ?? {};
-  });
+
+  const user = localStorage.getItem("user");
 
   const [active, setActive] = useState("");
   let items = FoodApi;
@@ -175,6 +171,8 @@ const Menu = () => {
       return temp;
     });
   };
+
+  console.log(user);
 
   useEffect(() => {
     let temp = [];
@@ -302,9 +300,8 @@ const Menu = () => {
     }
   }, [prices, types, status]);
 
+  /*
   useEffect(() => {
-    console.log(fillter);
-
     if (root === undefined) {
       root = createRoot(document.getElementById("food"));
     }
@@ -313,10 +310,10 @@ const Menu = () => {
     currentItems = fillter.slice(itemOffset, endOffset);
     pageCount = Math.ceil(fillter.length / itemsPerPage);
 
-    if (page === undefined) {
-      page = createRoot(document.getElementById("page"));
-    }
-
+    if (currentItems.length === 0) {
+      root.render(<h1>Không tìm thấy sản phẩm</h1>);
+   }
+    
     root.render(
       currentItems.map((item) => {
         return (
@@ -329,8 +326,8 @@ const Menu = () => {
       })
     );
 
-    if (currentItems.length === 0) {
-      root.render(<h1>Không tìm thấy sản phẩm</h1>);
+    if (page === undefined) {
+      page = createRoot(document.getElementById("page"));
     }
 
     page.render(
@@ -355,6 +352,7 @@ const Menu = () => {
       </div>
     );
   }, [fillter]);
+*/
 
   return (
     <>
@@ -522,22 +520,38 @@ const Menu = () => {
       </div>
 
       <div className="modal">
-        <div className="modal-container">
-          <div className="modal-close text-white">
+        <div
+          className={`modal-container ${
+            user === null ? "min-h-0 text-black w-[350px]" : "min-h-[350px] w-[800px]"
+          }`}
+        >
+          <div className={`modal-close ${user === null ? "text-black" : "text-white"}`}>
             <AiOutlineClose size={25} />
           </div>
-          <header className="modal-header gap-2">
-            <span className="text-white">
-              <FaShoppingCart size={25} />
-            </span>
-            <h2 className="modal-heading-text text-white text-3xl">
-              Thêm vào giỏ hàng
-            </h2>
-          </header>
-          <div className="modal-body">
+
+          {user === null ? (
+            <>
+            <header className="modal-header gap-2" style={{background: "white"}}>
+              <NavLink to={"/login"} className="modal-heading-text text-black text-3xl btn">
+                <span>Đăng nhập</span>
+              </NavLink>
+            </header>
+            </>
+          ) : (
+            <header className="modal-header gap-2">
+              <span className="text-white">
+                <FaShoppingCart size={25} />
+              </span>
+              <h2 className="modal-heading-text text-white text-3xl">
+                Thêm vào giỏ hàng
+              </h2>
+            </header>
+          )}
+
+          {/* <div className="modal-body">
             <div className="flex mb-8 gap-4">
               <div className="image">
-                <img width={200} height={200} src={img_src} alt="" />
+                <img width={200} heihtg={200} src={img_src} alt="" />
               </div>
               <div className="flex flex-col ml-4 gap-8 text-3xl justify-center">
                 <h2 className="text-primary-green">Tên: {cart.food_name}</h2>
@@ -566,7 +580,7 @@ const Menu = () => {
             <button className="btn w-full" onClick={()=>{handleAddToCart()}}>
               Thêm
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

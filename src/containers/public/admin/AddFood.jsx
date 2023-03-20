@@ -1,22 +1,25 @@
 import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { menuFood } from "../../../ultis/menus";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import {title} from "../../../ultis/title";
+import { title } from "../../../ultis/title";
+import { createFood } from "../../../apis/FoodApi";
 
 const AddFood = () => {
-
   document.title = title.addFood;
+  const navigate = useNavigate();
+  const users = JSON.parse(localStorage.getItem("user"));
   const [error, setError] = useState("");
   const [imageFood, setImageFood] = useState();
   const [sta, setSta] = useState([]);
   const [type, setType] = useState(1);
-  const [foodName, setFoodName] = useState("");
+  const [foodName, setFoodName] = useState("12");
   const [foodPrice, setFoodPrice] = useState("");
   const [promotion, setPromotion] = useState(0);
   const [foodDiscount, setFoodDiscount] = useState(0);
-  const [foodDescription, setFoodDescription] = useState("");
+  const [foodDescription, setFoodDescription] = useState("23");
   const [foodCategory, setFoodCategory] = useState(
     menuFood.filter((item) => !item.end)[0].text
   );
@@ -28,7 +31,7 @@ const AddFood = () => {
     { id: 3, text: "Món Ăn Theo Mùa", value: "seasonal dishes" },
     { id: 4, text: "Món Mới", value: "new dishes" },
   ];
-  
+
   const types = [
     { id: 1, type: "Mặn" },
     { id: 2, type: "Chay" },
@@ -62,39 +65,36 @@ const AddFood = () => {
       setError("Vui lòng nhập đầy đủ thông tin");
     } else {
       setError("");
-      const food = {
+      const foodTemp = {
         food_name: foodName,
-        food_star: "",
-        food_vote: "",
+        food_star: 0,
+        food_vote: 0,
         food_price: foodPrice,
-        food_discount: foodDiscount,
+        food_discount:foodDiscount.replace(",", ""),
         food_desc: foodDescription,
-        food_status: sta.length === 0 ? "normal": sta.toString().replaceAll(',', ' '),
+        food_status:
+          sta.length === 0 ? "normal" : sta.toString().replaceAll(",", " "),
         food_type: types.find((item) => item.id === type).type,
         food_category: foodCategory,
         food_src: imageFood.name,
       };
       let formData = new FormData();
 
-      formData.append("food", JSON.stringify(food));
+      formData.append("food", JSON.stringify(foodTemp));
       formData.set("food_src", imageFood);
 
-      toast.success('THêm thành công');
-
+      console.log(foodTemp);
       /*
-      axios({
-        method: "post",
-        url: "http://localhost:8081/api/foods",
-        data: formData,
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-        */
+      createFood(formData).then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          toast.success("THêm thành công");
+          navigate("/admin/")
+        }else{
+          toast.error("Thêm thất bại");
+        }
+      });
+      */
     }
   };
 

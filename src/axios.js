@@ -1,7 +1,7 @@
 import axios  from "axios";
 
 const instance = axios.create({
-    baseURL: process.env.REACT_APP_FOOD_API
+    baseURL: process.env.REACT_APP_FOOD_API + "/api"
 });
 
 axios.interceptors.request.use(function (config) {

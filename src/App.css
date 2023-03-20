@@ -163,8 +163,12 @@ html {
 }
 
 .header .nav:hover span{
-  width: min-content;
+  width: max-content;
   background-color: rgb(39 174 96) /1;
+}
+
+.header .nav:hover span{
+  color: black;
 }
 
 .header .nav {
@@ -525,7 +529,7 @@ html {
 }
 
 .order-section #bookTableForm .row input,
-.order-section #bookTableForm .row textarea {
+.order-section #bookTableForm .row textarea{
   width: 100%;
   margin-top: .5rem;
   padding: 1rem 1.2rem;
@@ -547,7 +551,9 @@ html {
   border-radius: .5rem;
 }
 
-
+#bookTableForm > div{
+  padding: 0 24px;
+}
 
 .about-section {
   padding: 2rem 9%;
@@ -1031,8 +1037,6 @@ hr {
 .modal-container{
   background: white;
   position: relative;
-  width: 800px;
-  min-height: 350px;
   animation: modalShow ease .6s;
 }
 
@@ -1218,7 +1222,7 @@ hr {
   padding: 1rem 0;
 }
 
-.form input:focus{
+.form input:focus, .form textarea:focus{
   text-transform: none;
   border: 1px solid rgb(116, 187, 249);
   border-radius: 5%;

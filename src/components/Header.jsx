@@ -2,7 +2,7 @@ import { React, useState } from "react";
 import logo from "../assets/images/taco-logo.png";
 import { menuHome } from "../ultis/menus";
 import { useNavigate, NavLink } from "react-router-dom";
-import {path} from "../ultis/path";
+import { path } from "../ultis/path";
 import icons from "../ultis/icons";
 
 const { FaShoppingCart, FaUser } = icons;
@@ -13,7 +13,7 @@ const activeStyle =
 
 function Header() {
   const navigate = useNavigate();
-  
+  const user = localStorage.getItem('user');
 
   return (
     <div className="header">
@@ -52,22 +52,51 @@ function Header() {
         >
           <FaShoppingCart size={24} />
         </div>
-        
+
         <div className="cursor-pointer relative p-10 hover:bg-main-primary-green">
           <div className="nav flex flex-col w-full">
-            <span className="p-4">
+            <span className="p-4 ">
               <FaUser size={26} />
             </span>
-              <ul>
+
+            <ul>
+              {user === null ? (
                 <li className="flex w-full flex-col text-[13px] justify-end">
-                  <NavLink to={"/login"} className="mt-2 p-4 cursor-pointer hover:bg-[#f38609]">
+                  <NavLink
+                    to={"/login"}
+                    className="mt-2 p-4 cursor-pointer hover:bg-[#f38609]"
+                  >
                     Đăng nhập
                   </NavLink>
-                  <NavLink to={"/register"} className="p-4 cursor-pointer hover:bg-[#f38609]">
+                  <NavLink
+                    to={"/register"}
+                    className="p-4 cursor-pointer hover:bg-[#f38609]"
+                  >
                     Đăng ký
                   </NavLink>
                 </li>
-              </ul>
+              ) : (
+                <>
+                  <li className="flex w-full flex-col text-[13px] justify-end">
+                    <span
+                      className="mt-2 p-4 cursor-pointer hover:bg-[#f38609]"
+                    >
+                      {JSON.parse(user).user_name}
+                    </span>
+                    
+                    <span
+                      onClick={() => {
+                        localStorage.removeItem("user");
+                        navigate("/");
+                      }}
+                      className="mt-2 p-4 cursor-pointer hover:bg-[#f38609]"
+                    >
+                      Đăng xuẩt
+                    </span>
+                  </li>
+                </>
+              )}
+            </ul>
           </div>
         </div>
       </div>

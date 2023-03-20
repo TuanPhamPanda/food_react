@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axios";
 
 export const addItems = (formData) =>
   new Promise(async (resolve, reject) => {

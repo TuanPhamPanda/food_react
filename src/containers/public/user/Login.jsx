@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { checkIsEmail } from "../../../ultis/CheckValue";
+import { checkIsEmail } from "../../../ultis/ValueStatic";
 import { title } from "../../../ultis/title";
+import { showUser } from "../../../apis/UserApi";
+import { toast } from "react-toastify";
 
 const Login = () => {
   document.title = title.login;
@@ -13,14 +15,28 @@ const Login = () => {
   const handleLogin = () => {
     if(email.length === 0 || password.length === 0){
       setError("Email và mật khẩu không được bỏ trống")
-    }else if(checkIsEmail(email)){
+    }else if(!checkIsEmail(email)){
       setError("Email bạn vừa nhập không hợp lệ. Vui lòng kiểm tra lại")
     }else{
+      setError("");
       if(email === 'tuan12345@gmail.com' && password === "admin123456"){
         navigate("/admin/");
+        toast.success("Đăng nhập thành công");
+      }else{
+
+        const formData = {user_email: email, user_password: password};
+
+        showUser(formData).then((respone)=>{
+          if(respone.status === 200){
+            toast.success("Đăng nhập thành công");
+            localStorage.setItem("user", (JSON.stringify(respone.data)));
+            navigate("/");
+          }else{
+            setError("Tài khoản hoặc mật khẩu không chính xác");
+          }
+        });
       }
     }
-
   };
 
   return (

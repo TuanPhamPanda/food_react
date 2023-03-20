@@ -28,7 +28,7 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(action.getFood());
+     dispatch(action.getFood());
   }, []);
 
   return (
