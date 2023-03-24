@@ -1,3 +1,5 @@
+import { showFoods } from "../apis";
+
 export const checkIsEmail = (email) => {
   return String(email)
     .toLowerCase()
@@ -224,4 +226,3 @@ export const arrayPhone = [
   { id: "+260", value: "Zambia" },
   { id: "+263", value: "Zimbabwe" },
 ];
-

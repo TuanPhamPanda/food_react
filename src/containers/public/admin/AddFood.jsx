@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { menuFood } from "../../../ultis/menus";
@@ -83,8 +82,6 @@ const AddFood = () => {
       formData.append("food", JSON.stringify(foodTemp));
       formData.set("food_src", imageFood);
 
-      console.log(foodTemp);
-      /*
       createFood(formData).then((response) => {
         console.log(response);
         if (response.status === 200) {
@@ -94,7 +91,6 @@ const AddFood = () => {
           toast.error("Thêm thất bại");
         }
       });
-      */
     }
   };
 

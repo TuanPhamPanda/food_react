@@ -25,11 +25,6 @@ import { useDispatch } from "react-redux";
 import * as action from './store/actions';
 
 const App = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-     dispatch(action.getFood());
-  }, []);
 
   return (
     <div>

@@ -548,7 +548,7 @@ const Menu = () => {
             </header>
           )}
 
-          {/* <div className="modal-body">
+          <div className="modal-body">
             <div className="flex mb-8 gap-4">
               <div className="image">
                 <img width={200} heihtg={200} src={img_src} alt="" />
@@ -580,7 +580,7 @@ const Menu = () => {
             <button className="btn w-full" onClick={()=>{handleAddToCart()}}>
               Thêm
             </button>
-          </div> */}
+          </div>
         </div>
       </div>
     </>

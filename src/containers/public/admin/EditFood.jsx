@@ -1,10 +1,9 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { menuFood } from "../../../ultis/menus";
 import { toast } from "react-toastify";
 import { title } from "../../../ultis/title";
-import { useSelector } from "react-redux";
+import { showFoodById } from "../../../apis/FoodApi";
 
 const status = [
   { id: 1, text: "Bán Chạy nhất", value: "best seller" },
@@ -18,32 +17,42 @@ const types = [
 ];
 
 const EditFood = () => {
-  const { FoodApi } = useSelector((state) => state.app);
   document.title = title.editFood;
   const navigate = useNavigate();
   const url = window.location.pathname;
   const id = +url.substring(url.lastIndexOf("/") + 1, url.length);
-  const food = FoodApi.find((item) => item.food_id === id);
+  const [food, setFood] = useState({});
+
+  useEffect(() => {
+    showFoodById(id).then((response) => {
+      if (response.status === 200) {
+        setFood(response.data);
+      }
+    });
+  }, []);
+
+  console.log(food);
+
   const foodImageSourse =
-    process.env.REACT_APP_FOOD_API + `/images/${food.food_src}`;
+    process.env.REACT_APP_FOOD_API + `/images/${food?.food_src}`;
 
   const [error, setError] = useState("");
   const [type, setType] = useState(() => {
-    return types.find((item) => item.type === food.food_type).id;
+    return types.find((item) => item.type === food?.food_type)?.id;
   });
+
   const [foodName, setFoodName] = useState(food.food_name);
-  const [foodPrice, setFoodPrice] = useState(food.food_price);
+  const [foodPrice, setFoodPrice] = useState(food?.food_price);
   const [promotion, setPromotion] = useState(() => {
-    return +(food.food_discount / food.food_price) * 100 === 0
-      ? 0
-      : ((food.food_discount / food.food_price) * 100).toFixed(3);
+    return (food?.food_discount / food?.food_price) * 100;
   });
-  const [foodDiscount, setFoodDiscount] = useState(food.food_discount);
-  const [foodDescription, setFoodDescription] = useState(food.food_desc);
+
+  const [foodDiscount, setFoodDiscount] = useState(food?.food_discount);
+  const [foodDescription, setFoodDescription] = useState(food?.food_desc);
   const [sta, setSta] = useState(() => {
     return status
-      .map((item) => item.value)
-      .filter((item) => food.food_status.toLowerCase().includes(item));
+      ?.map((item) => item.value)
+      .filter((item) => food?.food_status?.toLowerCase().includes(item));
   });
 
   const [imageFood, setImageFood] = useState();
@@ -131,7 +140,7 @@ const EditFood = () => {
   }, [imageFood]);
 
   useEffect(() => {
-    setFoodDiscount(VND.format(foodPrice - (foodPrice * promotion) / 100));
+    setFoodDiscount(foodPrice - (foodPrice * promotion) / 100);
   }, [promotion, foodPrice]);
 
   return (
@@ -178,7 +187,7 @@ const EditFood = () => {
                 }
               }}
               id="promotion"
-              value={VND.format(promotion)}
+              value={promotion}
               className="focus ml-8 text-center"
             />
           </div>

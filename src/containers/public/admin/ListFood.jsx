@@ -1,24 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import icons from "../../../ultis/icons";
 import { NavLink } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import { title } from "../../../ultis/title";
+import { deleteFood, showFoods } from "../../../apis";
 
 const ListFood = () => {
   document.title = title.listFood;
-  
-  const { FoodApi } = useSelector((state) => state.app); 
+  const [FoodApi, setFoodApi] = useState([]);
 
-  const dispatch = useDispatch();
+  const apiFood = () => {
+    showFoods()
+      .then((repose) => repose)
+      .then((data) => {
+        if (data.status === 200) {
+          setFoodApi(data.data);
+        }
+      });
+  };
+
+  useEffect(() => {
+    apiFood();
+  }, []);
+
   const { AiTwotoneEdit, AiFillDelete } = icons;
 
-  const handleDeleteFood = (food) => {
-    if(window.confirm(`Bạn có chắc muốn xóa sản phẩm có tên ${food.food_name} chứ?`)){
-      console.log("Calll api xóa food");
+  const handleDeleteFood = async (food) => {
+    if (
+      window.confirm(
+        `Bạn có chắc muốn xóa sản phẩm có tên ${food.food_name} chứ?`
+      )
+    ) {
+      deleteFood(food.food_id).then((data) => {
+        if (data.status === 200) {
+          apiFood();
+        }
+      });
     }
-  }
+  };
 
-  document.title = "Danh sách món ăn";
   return (
     <div className="list-food">
       <table className="table-food w-full text-xl whitespace-nowrap text-center">
@@ -44,7 +63,11 @@ const ListFood = () => {
               <td>{`${new Intl.NumberFormat("en-IN", {
                 maximumSignificantDigits: 3,
               }).format(item.food_price)} VND`}</td>
-              <td>{`${ ((item.food_discount / item.food_price)*100) === 0 ? "0" : ((item.food_discount / item.food_price)*100).toFixed(3) }%`}</td>
+              <td>{`${
+                (item.food_discount / item.food_price) * 100 === 0
+                  ? "0"
+                  : ((item.food_discount / item.food_price) * 100).toFixed(3)
+              }%`}</td>
               <td>{`${new Intl.NumberFormat("en-IN", {
                 maximumSignificantDigits: 3,
               }).format(item.food_discount)} VND`}</td>
@@ -67,7 +90,10 @@ const ListFood = () => {
                     </NavLink>
                   </span>
                   <span>
-                    <AiFillDelete size={30} onClick={()=>handleDeleteFood(item)}/>
+                    <AiFillDelete
+                      size={30}
+                      onClick={() => handleDeleteFood(item)}
+                    />
                   </span>
                 </div>
               </td>
