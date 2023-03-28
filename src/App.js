@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { ToastContainer } from "react-toastify";
 import { path, pathAdmin } from "./ultis/path";
 import {
@@ -21,8 +21,6 @@ import { Route, Routes } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import "./App.css";
-import { useDispatch } from "react-redux";
-import * as action from './store/actions';
 
 const App = () => {
 
@@ -48,7 +46,7 @@ const App = () => {
       </Routes>
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

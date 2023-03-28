@@ -22,6 +22,18 @@ const EditFood = () => {
   const url = window.location.pathname;
   const id = +url.substring(url.lastIndexOf("/") + 1, url.length);
   const [food, setFood] = useState({});
+  const [foodName, setFoodName] = useState("");
+  const [foodPrice, setFoodPrice] = useState(0);
+  const [promotion, setPromotion] = useState(0);
+  const [error, setError] = useState("");
+  const [type, setType] = useState({});
+  const [imageFood, setImageFood] = useState();
+  const [foodDiscount, setFoodDiscount] = useState(0);
+  const [foodDescription, setFoodDescription] = useState("");
+  const [foodCategory, setFoodCategory] = useState([]);
+  const [sta, setSta] = useState([]);
+
+  const [foodImageSource, setFoodImageSource] = useState("");
 
   useEffect(() => {
     showFoodById(id).then((response) => {
@@ -31,35 +43,25 @@ const EditFood = () => {
     });
   }, []);
 
-  console.log(food);
-
-  const foodImageSourse =
-    process.env.REACT_APP_FOOD_API + `/images/${food?.food_src}`;
-
-  const [error, setError] = useState("");
-  const [type, setType] = useState(() => {
-    return types.find((item) => item.type === food?.food_type)?.id;
-  });
-
-  const [foodName, setFoodName] = useState(food.food_name);
-  const [foodPrice, setFoodPrice] = useState(food?.food_price);
-  const [promotion, setPromotion] = useState(() => {
-    return (food?.food_discount / food?.food_price) * 100;
-  });
-
-  const [foodDiscount, setFoodDiscount] = useState(food?.food_discount);
-  const [foodDescription, setFoodDescription] = useState(food?.food_desc);
-  const [sta, setSta] = useState(() => {
-    return status
-      ?.map((item) => item.value)
-      .filter((item) => food?.food_status?.toLowerCase().includes(item));
-  });
-
-  const [imageFood, setImageFood] = useState();
-
-  const [foodCategory, setFoodCategory] = useState(
-    menuFood.filter((item) => !item.end)[0].text
-  );
+  useEffect(() => {
+    setFoodPrice(food?.food_price);
+    setPromotion( (food?.food_discount / food?.food_price) * 100 === 0
+    ? "0"
+    : ((food?.food_discount / food?.food_price) * 100).toFixed(3));
+    setFoodName(food.food_name);
+    setType(types.find((item) => item.type === food?.food_type)?.id);
+    setFoodImageSource(
+      process.env.REACT_APP_FOOD_API + `/images/${food?.food_src}`
+    );
+    setFoodDiscount(food?.food_discount);
+    setFoodDescription(food?.food_desc);
+    setFoodCategory(menuFood.filter((item) => !item.end)[0].text);
+    setSta(
+      status
+        ?.map((item) => item.value)
+        .filter((item) => food?.food_status?.toLowerCase().includes(item))
+    );
+  }, [food]);
 
   const VND = new Intl.NumberFormat();
 
@@ -97,24 +99,27 @@ const EditFood = () => {
         food_name: foodName,
         food_star: food.food_star,
         food_vote: food.food_vote,
-        food_price: VND.format(foodPrice),
-        food_discount: foodDiscount,
+        food_price: +foodPrice,
+        food_discount: +foodDiscount,
         food_desc: foodDescription,
         food_status:
           sta.length === 0 ? "normal" : sta.toString().replaceAll(",", " "),
         food_type: types.find((item) => item.id === type).type,
         food_category: foodCategory,
+        
       };
+
       if (imageFood !== undefined) {
-        food.food_src = imageFood.name;
+        foodTemp.food_src = imageFood.name;
       }
+
       setError("");
       let formData = new FormData();
 
       formData.append("food", JSON.stringify(foodTemp));
       formData.set("food_src", imageFood);
 
-      toast.success("Sửa thành công");
+     // toast.success("Sửa thành công");
       console.log(foodTemp);
       /*
       axios({
@@ -196,7 +201,7 @@ const EditFood = () => {
           <div className="flex justify-between">
             <label htmlFor="food_discount">Giá đã KM: </label>
             <input
-              value={foodDiscount}
+              value={VND.format(foodDiscount)}
               type="text"
               id="food_discount"
               name="food_discount"
@@ -288,7 +293,7 @@ const EditFood = () => {
             />
 
             {imageFood === undefined ? (
-              <img src={foodImageSourse} width={150} height={150} alt="" />
+              <img src={foodImageSource} width={150} height={150} alt="" />
             ) : (
               <img src={imageFood.preview} width={150} height={150} alt="" />
             )}

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { createAccount } from "../../../apis";
 import { title } from "../../../ultis/title";
-import { checkIsEmail, arrayPhone } from "../../../ultis/ValueStatic";
+import { checkIsEmail, arrayPhone, removeClass } from "../../../ultis/ValueStatic";
 
 const Register = () => {
   document.title = title.register;
@@ -13,36 +13,56 @@ const Register = () => {
   const [repassword, setRePassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [name, setName] = useState("");
-  const [gender, setGender] = useState(true);
-  const [error, setError] = useState("");
   const [phoneCode, setPhoneCode] = useState(() => arrayPhone[0].value);
+  
+  const handleError = (error, idInput, idPrev) => {
+    const element = document.getElementById(idInput);
+    element.style.border = "1px solid red";
+    element.scrollIntoView({ behavior: "smooth" });
 
-  const genders = [
-    { id: true, value: "Nam" },
-    { id: false, value: "Nữ" },
-  ];
+    if(idPrev !== undefined){
+      removeClass(idPrev)
+    }
+    const parent = element.parentNode;
+    const span = document.createElement("span");
+    span.className = "text-3xl text-red-500 mt-2";
+    span.innerHTML = error;
+
+    parent.appendChild(span);
+  };
   const navigate = useNavigate();
 
   const handleRegister = () => {
     if (name.length === 0) {
-      setError("Tên không được bỏ trống");
+      handleError("Tên không được bỏ trống", "name", undefined);
     } else if (!checkIsEmail(email)) {
-      setError("Không phải email");
-    }else if(password.length < 8){
-      setError("Mật khẩu phải từ 8 ký tự trở lên");
+      handleError("Không phải email", "email", ["name"]);
+    } else if (password.length < 8) {
+      handleError("Mật khẩu phải từ 8 ký tự trở lên", "password", ["name", "email"]);
     } else if (password != repassword) {
-      setError("Mật khẩu nhập lại không khớp");
-    } else if(+phoneNumber.substring(0,1) === 0){
-      setError("Số điện thoại không hợp lệ. Vui lòng không nhập số 0 đầu tiên");
+      handleError("Mật khẩu nhập lại không khớp", "repassword", ["name", "email", "password"]);
+    } else if (+phoneNumber.substring(0, 1) === 0) {
+      handleError("Số điện thoại không hợp lệ. Vui lòng không nhập số 0 đầu tiên", "phoneNumber", ["name", "email", "password", "password"]);
     } else if (phoneNumber.length === 0) {
-      setError("Số điện thoại không được bỏ trống");
+      handleError("Số điện thoại không được bỏ trống", "phoneNumber", ["name", "email", "password", "password"]);
     } else {
-      setError("");
 
-      //call api
-      
-      toast.success("Đăng ký thành công");
-      navigate("/login");
+      const user = {
+        user_name: name,
+        user_email: email,
+        user_phone: phoneCode + phoneNumber,
+        user_password: password
+      }
+
+      createAccount(user).then(reponse => {
+        console.log(reponse);
+        if(reponse.status === 200){
+          toast.success("Đăng ký thành công");
+          navigate("/login");
+        }else{
+          toast.error("Đăng ký thất bại");
+        }
+      })
     }
   };
 
@@ -128,12 +148,6 @@ const Register = () => {
             />
           </div>
         </div>
-
-        {error.length === 0 ? (
-          <></>
-        ) : (
-          <span className="text-red-500">{error}</span>
-        )}
 
         <button
           onClick={() => handleRegister()}

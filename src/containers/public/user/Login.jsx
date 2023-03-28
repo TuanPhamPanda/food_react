@@ -4,6 +4,7 @@ import { checkIsEmail } from "../../../ultis/ValueStatic";
 import { title } from "../../../ultis/title";
 import { showUser } from "../../../apis/UserApi";
 import { toast } from "react-toastify";
+import { formToJSON } from "axios";
 
 const Login = () => {
   document.title = title.login;
@@ -13,25 +14,24 @@ const Login = () => {
   const [error, setError] = useState("");
 
   const handleLogin = () => {
-    if(email.length === 0 || password.length === 0){
-      setError("Email và mật khẩu không được bỏ trống")
-    }else if(!checkIsEmail(email)){
-      setError("Email bạn vừa nhập không hợp lệ. Vui lòng kiểm tra lại")
-    }else{
+    if (email.length === 0 || password.length === 0) {
+      setError("Email và mật khẩu không được bỏ trống");
+    } else if (!checkIsEmail(email)) {
+      setError("Email bạn vừa nhập không hợp lệ. Vui lòng kiểm tra lại");
+    } else {
       setError("");
-      if(email === 'tuan12345@gmail.com' && password === "admin123456"){
+      if (email === "tuan12345@gmail.com" && password === "admin123456") {
         navigate("/admin/");
         toast.success("Đăng nhập thành công");
-      }else{
+      } else {
+        const user = { user_email: email, user_password: password };
 
-        const formData = {user_email: email, user_password: password};
-
-        showUser(formData).then((respone)=>{
-          if(respone.status === 200){
+        showUser(user).then((respone) => {
+          if (respone.status === 200) {
             toast.success("Đăng nhập thành công");
-            localStorage.setItem("user", (JSON.stringify(respone.data)));
+            localStorage.setItem("user", JSON.stringify(respone.data));
             navigate("/");
-          }else{
+          } else {
             setError("Tài khoản hoặc mật khẩu không chính xác");
           }
         });
@@ -43,7 +43,7 @@ const Login = () => {
     <div className="flex justify-center items-center mt-8 mb-12 h-full">
       <div className="form shadow-2xl shadow-yellow-500/50 p-10 flex flex-col gap-8">
         <div className="title w-full flex justify-center font-semibold text-2xl">
-      <h3 className="title">ĐĂNG NHẬP</h3>
+          <h3 className="title">ĐĂNG NHẬP</h3>
         </div>
         <div className="w-full flex flex-col gap-4 font-serif text-xl">
           <label className="inline-block" htmlFor="email">
@@ -76,18 +76,14 @@ const Login = () => {
           <span className="text-red-500">{error}</span>
         )}
 
-
-        <button
-          onClick={() => handleLogin()}
-          className="btn w-full p-4"
-        >
+        <button onClick={() => handleLogin()} className="btn w-full p-4">
           Đăng nhập ngay
         </button>
 
         <div className="desc flex gap-4 text-xl items-center">
           <h3>Bạn chưa có tài khoản?</h3>
           <button
-            className="cursor-pointer text-xl font-bold btn" 
+            className="cursor-pointer text-xl font-bold btn"
             onClick={(e) => {
               navigate("/register");
             }}

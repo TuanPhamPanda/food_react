@@ -74,9 +74,11 @@ const AddFood = () => {
         food_status:
           sta.length === 0 ? "normal" : sta.toString().replaceAll(",", " "),
         food_type: types.find((item) => item.id === type).type,
-        food_category: foodCategory,
-        food_src: imageFood.name,
+        food_category: foodCategory
       };
+      if(imageFood !== undefined){
+        foodTemp.food_src = imageFood.name
+      }
       let formData = new FormData();
 
       formData.append("food", JSON.stringify(foodTemp));

@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import icons from "../../../ultis/icons";
-import { NavLink } from "react-router-dom";
 import { title } from "../../../ultis/title";
 import { deleteFood, showFoods } from "../../../apis";
+import ReactPaginate from "react-paginate";
+import ItemFood from "./ItemFood";
 
+const {AiOutlineArrowLeft, AiOutlineArrowRight} = icons;
 const ListFood = () => {
+  const itemsPerPage = 10;
   document.title = title.listFood;
   const [FoodApi, setFoodApi] = useState([]);
+  const [itemOffset, setItemOffset] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
+  const [currentItems, setCurrentItems] = useState([]);
 
   const apiFood = () => {
     showFoods()
@@ -18,13 +24,30 @@ const ListFood = () => {
       });
   };
 
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % FoodApi.length;
+    setItemOffset(newOffset);
+  };
+
+  useEffect(() => {
+    const endOffset = itemOffset + itemsPerPage;
+    const currentItems = FoodApi.slice(itemOffset, endOffset);
+    setPageCount(Math.ceil(FoodApi.length / itemsPerPage));
+    setCurrentItems(currentItems);
+  }, [FoodApi]);
+
+  useEffect(() => {
+    const endOffset = itemOffset + itemsPerPage;
+    const currentItems = FoodApi.slice(itemOffset, endOffset);
+    setCurrentItems(currentItems);
+  }, [itemOffset]);
+
   useEffect(() => {
     apiFood();
   }, []);
 
-  const { AiTwotoneEdit, AiFillDelete } = icons;
 
-  const handleDeleteFood = async (food) => {
+  const handleDeleteFood = (food) => {
     if (
       window.confirm(
         `Bạn có chắc muốn xóa sản phẩm có tên ${food.food_name} chứ?`
@@ -56,51 +79,28 @@ const ListFood = () => {
           </tr>
         </thead>
         <tbody>
-          {FoodApi.map((item, index) => (
-            <tr key={item.food_id}>
-              <td>{index + 1}</td>
-              <td>{item.food_name}</td>
-              <td>{`${new Intl.NumberFormat("en-IN", {
-                maximumSignificantDigits: 3,
-              }).format(item.food_price)} VND`}</td>
-              <td>{`${
-                (item.food_discount / item.food_price) * 100 === 0
-                  ? "0"
-                  : ((item.food_discount / item.food_price) * 100).toFixed(3)
-              }%`}</td>
-              <td>{`${new Intl.NumberFormat("en-IN", {
-                maximumSignificantDigits: 3,
-              }).format(item.food_discount)} VND`}</td>
-              <td>{item.food_desc}</td>
-              <td>{item.food_status}</td>
-              <td>{item.food_type}</td>
-              <td>{item.food_category}</td>
-              <td>
-                <img
-                  className="w-[100px] h-[100px] m-auto"
-                  src={`${process.env.REACT_APP_FOOD_API}/images/${item.food_src}`}
-                  alt=""
-                />
-              </td>
-              <td>
-                <div className="flex justify-center gap-4 items-center">
-                  <span>
-                    <NavLink to={`/admin/editFood/${item.food_id}`}>
-                      <AiTwotoneEdit size={30} />
-                    </NavLink>
-                  </span>
-                  <span>
-                    <AiFillDelete
-                      size={30}
-                      onClick={() => handleDeleteFood(item)}
-                    />
-                  </span>
-                </div>
-              </td>
-            </tr>
+          {currentItems.map((item, index) => (
+            <ItemFood key={item.food_id} item={item} index={index} onDeleteFood = {handleDeleteFood} />
           ))}
         </tbody>
       </table>
+
+      <div id="page" className="mt-4">
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel={<AiOutlineArrowRight size={30} />}
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={5}
+          className="flex gap-6 justify-center items-center cursor-default"
+          pageClassName="text-2xl p-4"
+          activeClassName="bg-main-primary-orange text-white"
+          pageCount={pageCount}
+          disabledClassName="opacity-20"
+          disabledLinkClassName="cursor-default"
+          previousLabel={<AiOutlineArrowLeft size={30} />}
+          renderOnZeroPageCount={null}
+        />
+      </div>
     </div>
   );
 };

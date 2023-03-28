@@ -332,7 +332,6 @@ html {
 .home-banner .row-banner .content span {
   font-family: "Satisfy", cursive;
   font-size: 4rem;
-  color: #27ae60;
   color: #130f40;
 }
 
@@ -1566,4 +1565,10 @@ hr {
       opacity: 1;
       transform: translateY(0);
   }
+}
+
+#bookTableForm .input-box{
+  display: flex;
+  gap: 4px;
+  flex-direction: column;
 }

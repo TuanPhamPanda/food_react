@@ -5,8 +5,8 @@ export const createBooking = (formData) =>
     try {
       const reponse = await axios({
         url: "/booking",
-        method: "post",
         data: formData,
+        method: "post"
       });
       resolve(reponse);
     } catch (error) {

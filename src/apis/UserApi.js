@@ -4,7 +4,7 @@ export const showUser = (formData) =>
   new Promise(async (resolve, reject) => {
     try {
       const reponse = await axios({
-        url: '/users/',
+        url: '/login',
         method: "post",
         data: formData
       });
@@ -18,7 +18,7 @@ export const createAccount = (formData) =>
   new Promise(async (resolve, reject) => {
     try {
       const reponse = await axios({
-        url: `/users/`,
+        url: `/register`,
         data: formData,
         method: "post",
       });
