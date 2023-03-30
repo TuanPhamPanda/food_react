@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { createRoot } from "react-dom/client";
 import { menuFood } from "../../../ultis/menus";
 import { Food } from "../../../components";
 import ReactPaginate from "react-paginate";
 import icons from "../../../ultis/icons";
-import { useSelector } from "react-redux";
-import { actionTypesFood } from "../../../store/actions/actionTypes";
 import { title } from "../../../ultis/title";
 import { NavLink } from "react-router-dom";
+import { showFoods, addItems } from "../../../apis";
+import { toast } from "react-toastify";
 
-var root, page;
 const {
   AiOutlineArrowLeft,
   AiOutlineArrowRight,
@@ -17,10 +15,53 @@ const {
   FaShoppingCart,
 } = icons;
 const itemsPerPage = 6;
+const quantity = 10;
 const Menu = () => {
   document.title = title.menu;
 
-  const { FoodApi } = useSelector((state) => state.app);
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  useEffect(() => {
+    apiFood();
+  }, []);
+
+  const [FoodApi, setFoodApi] = useState([]);
+  const [itemOffset, setItemOffset] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
+  const [currentItems, setCurrentItems] = useState([]);
+  const quantityRender = [];
+  for (let index = 1; index < quantity + 1; index++) {
+    quantityRender.push(<option className="text-center" value={index}>{index}</option>);
+  }
+
+  const apiFood = () => {
+    showFoods()
+      .then((repose) => repose)
+      .then((data) => {
+        if (data.status === 200) {
+          setFoodApi(data.data);
+        }
+      });
+  };
+
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % FoodApi.length;
+    setItemOffset(newOffset);
+  };
+
+  useEffect(() => {
+    const endOffset = itemOffset + itemsPerPage;
+    const currentItems = FoodApi.slice(itemOffset, endOffset);
+    setPageCount(Math.ceil(FoodApi.length / itemsPerPage));
+    setCurrentItems(currentItems);
+  }, [FoodApi]);
+
+  useEffect(() => {
+    const endOffset = itemOffset + itemsPerPage;
+    const currentItems = FoodApi.slice(itemOffset, endOffset);
+    setCurrentItems(currentItems);
+  }, [itemOffset]);
+
   const [count, setCount] = useState(1);
 
   const handleClick = (event) => {
@@ -33,32 +74,25 @@ const Menu = () => {
     setCart(cart);
   };
 
-  const handleAddToCart = () => {
-    alert(12345);
+  const handleAddToCart = (e) => {
+    const cartForm = {
+      user_id: user.user_id,
+      food_id: cart.food_id,
+      item_qty: +count,
+    };
+
+    addItems(cartForm)
+      .then((reponse) => {
+        if (reponse.status === 200) {
+          toast.info("Đã thêm 1 sản phẩm vào giỏ hàng");
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   let img_src = `${process.env.REACT_APP_FOOD_API}/images/${cart.food_src}`;
-
-  const modalContainer = document.querySelector(".modal-container");
-
-  modalContainer?.addEventListener("click", function (event) {
-    event.stopPropagation();
-  });
-
-  const user = localStorage.getItem("user");
-
   const [active, setActive] = useState("");
-  let items = FoodApi;
   const [fillter, setFillter] = useState([]);
-  const [itemOffset, setItemOffset] = useState(0);
-  let endOffset = itemOffset + itemsPerPage;
-  let currentItems = items.slice(itemOffset, endOffset);
-  let pageCount = Math.ceil(items.length / itemsPerPage);
-
-  const handlePageClick = (event, length) => {
-    const newOffset = (event.selected * itemsPerPage) % length;
-    setItemOffset(newOffset);
-  };
 
   const [status, setStatus] = useState([
     { status: "Bán Chạy nhất" },
@@ -87,7 +121,6 @@ const Menu = () => {
         menu.toLocaleLowerCase()
       );
     });
-
     setFillter(menuItems);
   };
 
@@ -172,8 +205,6 @@ const Menu = () => {
     });
   };
 
-  console.log(user);
-
   useEffect(() => {
     let temp = [];
 
@@ -250,6 +281,20 @@ const Menu = () => {
               )
             ) > Number.parseInt(`${searchPrice},000`)
         );
+      } else if (price.price.includes("<")) {
+        let searchPrice = trimPrice.replace("<", "");
+        setFillter(
+          fillter.filter(
+            (item) =>
+              Number.parseInt(
+                new Intl.NumberFormat("en-IN", {
+                  maximumSignificantDigits: 3,
+                }).format(
+                  item.props.food.food_price - item.props.food.food_discount
+                )
+              ) < Number.parseInt(`${searchPrice},000`)
+          )
+        );
       }
 
       let checkPrice = trimPrice.split("-");
@@ -272,29 +317,10 @@ const Menu = () => {
         );
         return priceFilter >= searchPrice1 && priceFilter <= searchPrice2;
       });
-
-      /*
-        } else if (price.price.includes("<")) {
-          let searchPrice = trimPrice.replace("<", "");
-          setFillter(
-            fillter.filter(
-              (item) =>
-                Number.parseInt(
-                  new Intl.NumberFormat("en-IN", {
-                    maximumSignificantDigits: 3,
-                  }).format(
-                    item.props.food.food_price - item.props.food.food_discount
-                  )
-                ) < Number.parseInt(`${searchPrice},000`)
-            )
-          );
-        }
-      } else if (type !== undefined) {
-        setFillter(
-          fillter.filter((item) => item.props.food.food_type === type.type)
-        );
-      }
-      */
+    } else if (type !== undefined) {
+      setFillter(
+        fillter.filter((item) => item.props.food.food_type === type.type)
+      );
     } else {
       setFillter(renderFoodAll());
     }
@@ -302,57 +328,9 @@ const Menu = () => {
 
   /*
   useEffect(() => {
-    if (root === undefined) {
-      root = createRoot(document.getElementById("food"));
-    }
-
-    endOffset = itemOffset + itemsPerPage;
-    currentItems = fillter.slice(itemOffset, endOffset);
-    pageCount = Math.ceil(fillter.length / itemsPerPage);
-
-    if (currentItems.length === 0) {
-      root.render(<h1>Không tìm thấy sản phẩm</h1>);
-   }
-    
-    root.render(
-      currentItems.map((item) => {
-        return (
-          <Food
-            key={item.props.food.food_id}
-            cart={getCart}
-            food={item.props.food}
-          />
-        );
-      })
-    );
-
-    if (page === undefined) {
-      page = createRoot(document.getElementById("page"));
-    }
-
-    page.render(
-      <div>
-        <ReactPaginate
-          breakLabel="..."
-          nextLabel={<AiOutlineArrowRight size={30} />}
-          onPageChange={(e) => {
-            handlePageClick(e, (e) => {
-              setItemOffset((e.selected * itemsPerPage) % fillter.length);
-            });
-          }}
-          pageRangeDisplayed={5}
-          pageCount={pageCount}
-          activeClassName="active"
-          containerClassName="pagination"
-          nextClassName="page-num"
-          previousClassName="page-num"
-          previousLabel={<AiOutlineArrowLeft size={30} />}
-          renderOnZeroPageCount={null}
-        />
-      </div>
-    );
+    setFoodApi(fillter.map((item) => item.props.food));
   }, [fillter]);
-*/
+  */
 
   return (
     <>
@@ -494,16 +472,18 @@ const Menu = () => {
               </div>
               <div className="row box-container" id="food">
                 {currentItems.map((item) => (
-                  <Food cart={getCart} key={item.food_id} food={item} />
+                  <Food
+                    cart={getCart}
+                    key={item.food_id}
+                    food={item}
+                  />
                 ))}
               </div>
               <div id="page">
                 <ReactPaginate
                   breakLabel="..."
                   nextLabel={<AiOutlineArrowRight size={30} />}
-                  onPageChange={(e) => {
-                    handlePageClick(e, items.length);
-                  }}
+                  onPageChange={handlePageClick}
                   pageRangeDisplayed={5}
                   pageCount={pageCount}
                   activeClassName="active"
@@ -522,65 +502,86 @@ const Menu = () => {
       <div className="modal">
         <div
           className={`modal-container ${
-            user === null ? "min-h-0 text-black w-[350px]" : "min-h-[350px] w-[800px]"
+            user === null
+              ? "min-h-0 text-black w-[350px]"
+              : "min-h-[350px] w-[800px]"
           }`}
         >
-          <div className={`modal-close ${user === null ? "text-black" : "text-white"}`}>
+          <div
+            className={`modal-close ${
+              user === null ? "text-black" : "text-white"
+            }`}
+          >
             <AiOutlineClose size={25} />
           </div>
 
           {user === null ? (
             <>
-            <header className="modal-header gap-2" style={{background: "white"}}>
-              <NavLink to={"/login"} className="modal-heading-text text-black text-3xl btn">
-                <span>Đăng nhập</span>
-              </NavLink>
-            </header>
+              <header
+                className="modal-header gap-2"
+                style={{ background: "white" }}
+              >
+                <NavLink
+                  to={"/login"}
+                  className="modal-heading-text text-black text-3xl btn"
+                >
+                  <span>Đăng nhập</span>
+                </NavLink>
+              </header>
             </>
           ) : (
-            <header className="modal-header gap-2">
-              <span className="text-white">
-                <FaShoppingCart size={25} />
-              </span>
-              <h2 className="modal-heading-text text-white text-3xl">
-                Thêm vào giỏ hàng
-              </h2>
-            </header>
+            <>
+              <header className="modal-header gap-2">
+                <span className="text-white">
+                  <FaShoppingCart size={25} />
+                </span>
+                <h2 className="modal-heading-text text-white text-3xl">
+                  Thêm vào giỏ hàng
+                </h2>
+              </header>
+              <div className="modal-body">
+                <div className="flex mb-8 gap-4">
+                  <div className="image">
+                    <img width={200} heihtg={200} src={img_src} alt="" />
+                  </div>
+                  <div className="flex flex-col ml-4 gap-8 text-3xl justify-center w-full">
+                    <h2 className="text-primary-green">
+                      Tên: {cart.food_name}
+                    </h2>
+                    <h3>Mô tả: {cart.food_desc}</h3>
+                    <h3>
+                      Giá:{" "}
+                      {new Intl.NumberFormat("en-IN", {
+                        maximumSignificantDigits: 3,
+                      }).format(cart.food_price - cart.food_discount)}{" "}
+                      VND
+                    </h3>
+                    <div className="flex gap-4">
+                      <label htmlFor="iQuantity">Số lượng:</label>
+                      <select
+                        onChange={(e) => setCount(e.target.value)}
+                        value={count}
+                        className="focus px-8 justify-center items-center flex w-1/5"
+                        id="iQuantity"
+                      >
+                        {quantityRender}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="p-4">
+                <button
+                  className="btn w-full"
+                  onClick={(e) => {
+                    handleAddToCart(e);
+                  }}
+                >
+                  Thêm
+                </button>
+              </div>
+            </>
           )}
-
-          <div className="modal-body">
-            <div className="flex mb-8 gap-4">
-              <div className="image">
-                <img width={200} heihtg={200} src={img_src} alt="" />
-              </div>
-              <div className="flex flex-col ml-4 gap-8 text-3xl justify-center">
-                <h2 className="text-primary-green">Tên: {cart.food_name}</h2>
-                <h3>Mô tả: {cart.food_desc}</h3>
-                <h3>
-                  Giá:{" "}
-                  {new Intl.NumberFormat("en-IN", {
-                    maximumSignificantDigits: 3,
-                  }).format(cart.food_price - cart.food_discount)}{" "}
-                  VND
-                </h3>
-                <label htmlFor="iQuantity">
-                  Số lượng:{" "}
-                  <input
-                    className="text-center focus"
-                    id="iQuantity"
-                    type="number"
-                    onChange={(e) => setCount(e.target.value)}
-                    min={1}
-                    max={10}
-                    value={count}
-                  />
-                </label>
-              </div>
-            </div>
-            <button className="btn w-full" onClick={()=>{handleAddToCart()}}>
-              Thêm
-            </button>
-          </div>
         </div>
       </div>
     </>

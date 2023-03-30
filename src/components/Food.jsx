@@ -1,26 +1,35 @@
-import React, {memo} from "react";
+import React, { memo } from "react";
 import icons from "../ultis/icons";
 
-const { BsStarFill, BsStarHalf } = icons;
+const { BsStarFill, BsStarHalf, AiOutlineStar } = icons;
 
 function Food({ food, cart }) {
-  const modal = document.querySelector(".modal");
-  const modalClose = document.querySelector(".modal-close");
-
-  modalClose?.addEventListener("click", hideModal);
-  function hideModal() {
-    modal.classList.remove("open");
-  }
-
-  modal?.addEventListener('click', hideModal);
-
   const handleCart = (food) => {
     cart(food);
+
+    const modal = document.querySelector(".modal");
+    const modalClose = document.querySelector(".modal-close");
+
+    modalClose.addEventListener("click", hideModal);
+    function hideModal() {
+      modal.classList.remove("open");
+    }
+
+    modal.addEventListener("click", hideModal);
     modal.classList.add("open");
+
+    const modalContainer = document.querySelector(".modal-container").childNodes;
+
+    for (let index = 0; index < modalContainer.length; index++) {
+      if (index !== modalContainer.length - 1) {
+        modalContainer[index].addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+      }
+    }
   };
 
-
-  let img_src = `http://localhost:8081/images/${food.food_src}`;
+  let img_src = `${process.env.REACT_APP_FOOD_API}/images/${food.food_src}`;
 
   let startFull = [];
   let startHaft = food.food_star?.split(".")[1];
@@ -30,6 +39,14 @@ function Food({ food, cart }) {
 
   if (startHaft !== undefined) {
     startFull.push(<BsStarHalf />);
+  }
+
+  if (startFull.length === 0) {
+    startFull.push(<AiOutlineStar />);
+    startFull.push(<AiOutlineStar />);
+    startFull.push(<AiOutlineStar />);
+    startFull.push(<AiOutlineStar />);
+    startFull.push(<AiOutlineStar />);
   }
 
   return (

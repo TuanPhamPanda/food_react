@@ -27,10 +27,16 @@ const Login = () => {
         const user = { user_email: email, user_password: password };
 
         showUser(user).then((respone) => {
+          console.log(respone);
+
           if (respone.status === 200) {
-            toast.success("Đăng nhập thành công");
-            localStorage.setItem("user", JSON.stringify(respone.data));
-            navigate("/");
+            if (respone.data === "") {
+              setError("Tài khoản hoặc mật khẩu không chính xác");
+            } else {
+              toast.success("Đăng nhập thành công");
+              localStorage.setItem("user", JSON.stringify(respone.data));
+              navigate("/");
+            }
           } else {
             setError("Tài khoản hoặc mật khẩu không chính xác");
           }

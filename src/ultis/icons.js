@@ -4,7 +4,7 @@ import { TbChartArcs } from "react-icons/tb";
 import { FaUser, FaShoppingCart } from "react-icons/fa";
 import { BsThreeDots, BsFacebook, BsTwitter, BsInstagram, BsPinterest, BsStarFill, BsStarHalf } from "react-icons/bs";
 import { CiRepeat } from "react-icons/ci";
-import { AiFillHeart, AiOutlineArrowRight, AiOutlineArrowLeft, AiOutlineClose, AiFillDelete, AiTwotoneEdit } from "react-icons/ai";
+import { AiFillHeart, AiOutlineArrowRight, AiOutlineArrowLeft, AiOutlineClose, AiFillDelete, AiTwotoneEdit, AiOutlineStar } from "react-icons/ai";
 
 const icons = {
   MdOutlineLibraryMusic,
@@ -25,7 +25,8 @@ const icons = {
   AiOutlineArrowLeft,
   AiOutlineClose,
   AiTwotoneEdit,
-  AiFillDelete
+  AiFillDelete,
+  AiOutlineStar,
 };
 
 export default icons;

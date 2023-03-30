@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { menuFood } from "../../../ultis/menus";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
 import { title } from "../../../ultis/title";
 import { createFood } from "../../../apis/FoodApi";
 
 const AddFood = () => {
   document.title = title.addFood;
   const navigate = useNavigate();
-  const users = JSON.parse(localStorage.getItem("user"));
   const [error, setError] = useState("");
   const [imageFood, setImageFood] = useState();
   const [sta, setSta] = useState([]);
