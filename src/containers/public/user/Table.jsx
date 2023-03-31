@@ -169,9 +169,9 @@ const Table = () => {
             />
           </div>
         </div>
-        <div class="row gap-4">
-          <div class="input-box">
-            <label for="people">Số Người</label>
+        <div className="row gap-4">
+          <div className="input-box">
+            <label htmlFor="people">Số Người</label>
             <input
               type="number"
               min={0}
@@ -188,8 +188,8 @@ const Table = () => {
               id="people"
             />
           </div>
-          <div class="input-box">
-            <label for="oTables">Số Bàn</label>
+          <div className="input-box">
+            <label htmlFor="oTables">Số Bàn</label>
             <input
               type="number"
               id="tables"
@@ -204,9 +204,9 @@ const Table = () => {
             />
           </div>
         </div>
-        <div class="row gap-4">
-          <div class="input-box">
-            <label for="card">Thẻ Thành Viên Của Bạn</label>
+        <div className="row gap-4">
+          <div className="input-box">
+            <label htmlFor="card">Thẻ Thành Viên Của Bạn</label>
             <input
               type="text"
               value={card}
@@ -216,8 +216,8 @@ const Table = () => {
             />
           </div>
 
-          <div class="input-box">
-            <label for="when">Thời Gian</label>
+          <div className="input-box">
+            <label htmlFor="when">Thời Gian</label>
             <input
               type="datetime-local"
               id="when"
@@ -228,9 +228,9 @@ const Table = () => {
             />
           </div>
         </div>
-        <div class="row gap-4">
-          <div class="input-box">
-            <label for="note">Ghi Chú</label>
+        <div className="row gap-4">
+          <div className="input-box">
+            <label htmlFor="note">Ghi Chú</label>
             <textarea
               style={{ marginTop: "16px" }}
               placeholder="Tin nhắn của bạn, Bạn có muốn trang trí bàn của bạn"
@@ -241,7 +241,7 @@ const Table = () => {
               rows="10"
             ></textarea>
           </div>
-          <div class="input-box">
+          <div className="input-box">
             <label>Chọn địa điểm</label>
             <iframe
               style={{ marginTop: "16px" }}

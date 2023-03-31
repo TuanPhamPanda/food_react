@@ -9,6 +9,7 @@ export const path = {
     REGISTER: "register",
     PROMOTION: "promotion",
     MENU__DETAIL__FOOD: "menu/:slugFood",
+    ORDER: "order",
     START: "*",
 }
 

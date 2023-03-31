@@ -22,6 +22,7 @@ import { Route, Routes } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import "./App.css";
+import Order from "./containers/public/user/Order";
 
 const App = () => {
   return (
@@ -36,6 +37,7 @@ const App = () => {
             <Route path={path.MENU} element={<Menu itemsPerPage={6} />} />
             <Route path={path.LOGIN} element={<Login />} />
             <Route path={path.CART} element={<Cart />} />
+            <Route path={path.ORDER} element={<Order />} />
             <Route path={path.START} element={<Home />} />
           </Route>
           <Route path={pathAdmin.PUBLIC} element={<PublicAdmin />}>
@@ -57,7 +59,6 @@ const App = () => {
           pauseOnHover
           theme="light"
         />
-        <ToastContainer />
       </div>
     </Scrollbars>
   );

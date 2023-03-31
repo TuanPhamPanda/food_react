@@ -1,5 +1,3 @@
-import { showFoods } from "../apis";
-
 export const checkIsEmail = (email) => {
   return String(email)
     .toLowerCase()
@@ -227,6 +225,15 @@ export const arrayPhone = [
   { id: "+263", value: "Zimbabwe" },
 ];
 
+export const quantityRender = (quantity) => {
+  const arrayQuantityRender = [];
+  for (let index = 1; index < quantity + 1; index++) {
+    arrayQuantityRender.push(<option className="text-center" value={index}>{index}</option>);
+  }
+
+  return arrayQuantityRender;
+}
+
 export const removeClass = (idPrev) => {
   for (let i = 0; i < idPrev.length; i++) {
     const elementPrev = document.getElementById(`${idPrev[i]}`);
@@ -285,3 +292,8 @@ export const renderError = (idPrev,arr, idInput, errorMessage) => {
   }
   parent.appendChild(span);
 };
+
+export const deliveryCharges = 15000;
+
+export const phoneContact1 = "Tuấn: +84941502499";
+export const phoneContact2 = "Hoàng: +84979318763";

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { menuFood } from "../../../ultis/menus";
 import { Food } from "../../../components";
 import ReactPaginate from "react-paginate";
@@ -7,6 +7,7 @@ import { title } from "../../../ultis/title";
 import { NavLink } from "react-router-dom";
 import { showFoods, addItems } from "../../../apis";
 import { toast } from "react-toastify";
+import { quantityRender } from "../../../ultis/ValueStatic";
 
 const {
   AiOutlineArrowLeft,
@@ -29,10 +30,6 @@ const Menu = () => {
   const [itemOffset, setItemOffset] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [currentItems, setCurrentItems] = useState([]);
-  const quantityRender = [];
-  for (let index = 1; index < quantity + 1; index++) {
-    quantityRender.push(<option className="text-center" value={index}>{index}</option>);
-  }
 
   const apiFood = () => {
     showFoods()
@@ -55,12 +52,6 @@ const Menu = () => {
     setPageCount(Math.ceil(FoodApi.length / itemsPerPage));
     setCurrentItems(currentItems);
   }, [FoodApi]);
-
-  useEffect(() => {
-    const endOffset = itemOffset + itemsPerPage;
-    const currentItems = FoodApi.slice(itemOffset, endOffset);
-    setCurrentItems(currentItems);
-  }, [itemOffset]);
 
   const [count, setCount] = useState(1);
 
@@ -326,6 +317,7 @@ const Menu = () => {
     }
   }, [prices, types, status]);
 
+  
   /*
   useEffect(() => {
     setFoodApi(fillter.map((item) => item.props.food));
@@ -564,7 +556,7 @@ const Menu = () => {
                         className="focus px-8 justify-center items-center flex w-1/5"
                         id="iQuantity"
                       >
-                        {quantityRender}
+                        {quantityRender(quantity)}
                       </select>
                     </div>
                   </div>

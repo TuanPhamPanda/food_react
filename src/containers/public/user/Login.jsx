@@ -4,7 +4,6 @@ import { checkIsEmail } from "../../../ultis/ValueStatic";
 import { title } from "../../../ultis/title";
 import { showUser } from "../../../apis/UserApi";
 import { toast } from "react-toastify";
-import { formToJSON } from "axios";
 
 const Login = () => {
   document.title = title.login;
@@ -27,8 +26,6 @@ const Login = () => {
         const user = { user_email: email, user_password: password };
 
         showUser(user).then((respone) => {
-          console.log(respone);
-
           if (respone.status === 200) {
             if (respone.data === "") {
               setError("Tài khoản hoặc mật khẩu không chính xác");
