@@ -8,6 +8,7 @@ export const path = {
     LOGIN: "login",
     REGISTER: "register",
     PROMOTION: "promotion",
+    THANK: "thank",
     MENU__DETAIL__FOOD: "menu/:slugFood",
     ORDER: "order",
     START: "*",
