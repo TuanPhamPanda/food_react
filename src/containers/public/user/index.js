@@ -8,3 +8,4 @@ export { default as Register } from "./Register";
 export { default as Table } from "./Table";
 export { default as Thank } from "./Thank";
 export { default as Order } from "./Order";
+export { default as Error } from "./Error";

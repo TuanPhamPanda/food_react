@@ -13,6 +13,7 @@ import {
   Menu,
   Order,
   Thank,
+  Error,
 } from "./containers/public/user";
 import {
   ListFood,
@@ -40,6 +41,7 @@ const App = () => {
             <Route path={path.CART} element={<Cart />} />
             <Route path={path.ORDER} element={<Order />} />
             <Route path={path.THANK} element={<Thank />} />
+            <Route path={path.ERROR} element={<Error />} />
             <Route path={path.START} element={<Home />} />
           </Route>
           <Route path={pathAdmin.PUBLIC} element={<PublicAdmin />}>
@@ -51,7 +53,7 @@ const App = () => {
         </Routes>
         <ToastContainer
           position="top-right"
-          autoClose={5000}
+          autoClose={3000}
           hideProgressBar={false}
           newestOnTop={false}
           closeOnClick

@@ -251,18 +251,20 @@ export const removeClass = (idPrev) => {
   }
 };
 
-export const renderError = (idPrev,arr, idInput, errorMessage) => {
-  if (idPrev.length === 0 && arr !== undefined) {
-    removeClass(arr);
+export const renderError = (idPrev, idInput, errorMessage) => {
+
+  if(!idInput && !errorMessage){
+    removeClass(idPrev);
     return;
   }
+
   if (idPrev === undefined) {
     const element = document.getElementById(`${idInput}`);
     element.style.border = "1px solid red";
     element.scrollIntoView({ behavior: "smooth" });
     const parent = element.parentNode;
     const span = document.createElement("span");
-    span.className = "text-3xl text-red-500 mt-2";
+    span.className = "text-lg text-red-500 mt-2 absolute top-16";
     span.innerHTML = errorMessage;
 
     const elementTemp = parent.childNodes;
@@ -275,12 +277,18 @@ export const renderError = (idPrev,arr, idInput, errorMessage) => {
     return;
   }
 
+  if (idPrev.length === 0) {
+    const arr = ["name", "phoneNumber", "when", "note"];
+    removeClass(arr);
+    return;
+  }
+
   const element = document.getElementById(`${idInput}`);
   element.style.border = "1px solid red";
-  element.scrollIntoView({ behavior: "smooth" });
+  element.scrollIntoView({behavior: "smooth", block: "end"});
   const parent = element.parentNode;
   const span = document.createElement("span");
-  span.className = "text-3xl text-red-500 mt-2";
+  span.className = "text-lg text-red-500 mt-2 absolute top-16";
   span.innerHTML = errorMessage;
 
   const elementTemp = parent.childNodes;
@@ -290,10 +298,58 @@ export const renderError = (idPrev,arr, idInput, errorMessage) => {
   if (idPrev) {
     removeClass(idPrev);
   }
+  
   parent.appendChild(span);
 };
+
+
+// export const renderError = (idPrev, arr, idInput, errorMessage) => {
+//   if (idPrev.length === 0 && arr !== undefined) {
+//     removeClass(arr);
+//     return;
+//   }
+//   if (idPrev === undefined) {
+//     const element = document.getElementById(`${idInput}`);
+//     element.style.border = "1px solid red";
+//     element.scrollIntoView({ behavior: "smooth" });
+//     const parent = element.parentNode;
+//     const span = document.createElement("span");
+//     span.className = "text-3xl text-red-500 mt-2";
+//     span.innerHTML = errorMessage;
+
+//     const elementTemp = parent.childNodes;
+//     if (
+//       elementTemp[elementTemp.length - 1].nodeName.toLowerCase() === "span"
+//     ) {
+//       element.parentNode.removeChild(elementTemp[elementTemp.length - 1]);
+//     }
+//     parent.appendChild(span);
+//     return;
+//   }
+
+//   const element = document.getElementById(`${idInput}`);
+//   element.style.border = "1px solid red";
+//   element.scrollIntoView({ behavior: "smooth" });
+//   const parent = element.parentNode;
+//   const span = document.createElement("span");
+//   span.className = "text-3xl text-red-500 mt-2";
+//   span.innerHTML = errorMessage;
+
+//   const elementTemp = parent.childNodes;
+//   if (elementTemp[elementTemp.length - 1].nodeName.toLowerCase() === "span") {
+//     element.parentNode.removeChild(elementTemp[elementTemp.length - 1]);
+//   }
+//   if (idPrev) {
+//     removeClass(idPrev);
+//   }
+//   parent.appendChild(span);
+// };
 
 export const deliveryCharges = 15000;
 
 export const phoneContact1 = "Tuấn: +84941502499";
 export const phoneContact2 = "Hoàng: +84979318763";
+export const pays = [
+  {id: "cash", textDecript: "Tiền mặt"},
+  {id: "card", textDecript: "Thẻ (ViSa)"} 
+]

@@ -11,6 +11,7 @@ export const path = {
     THANK: "thank",
     MENU__DETAIL__FOOD: "menu/:slugFood",
     ORDER: "order",
+    ERROR: "404-error",
     START: "*",
 }
 
