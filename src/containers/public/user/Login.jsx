@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { checkIsEmail } from "../../../ultis/ValueStatic";
 import { title } from "../../../ultis/title";
 import { showUser } from "../../../apis/UserApi";
@@ -93,6 +93,7 @@ const Login = () => {
           >
             Tạo mới
           </button>
+          <span onClick={()=>navigate('/forget-password')} style={{fontSize: "12px", padding: "4px 4px"}} className="btn">Quên mật khẩu</span>
         </div>
       </div>
     </div>

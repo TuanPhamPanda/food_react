@@ -9,3 +9,5 @@ export { default as Table } from "./Table";
 export { default as Thank } from "./Thank";
 export { default as Order } from "./Order";
 export { default as Error } from "./Error";
+export { default as ForgetPassword } from "./ForgetPassword";
+export { default as ChangePassword } from "./ChangePassword";

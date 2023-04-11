@@ -7,11 +7,19 @@ import {
   phoneContact1,
   phoneContact2,
 } from "../../../ultis/ValueStatic";
+import jwt_decode from 'jwt-decode';
 
 const Cart = () => {
   document.title = title.cart;
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(()=>{
+    const localStorageUser = localStorage.getItem('user');
+    if(localStorageUser){
+      return jwt_decode( JSON.parse(localStorage.getItem('user')).accessToken); 
+    }else{
+      return {};
+    }
+  });
   const [carts, setCarts] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [foodDiscount, setFoodDiscount] = useState(0);

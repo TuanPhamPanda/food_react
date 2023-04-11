@@ -4,6 +4,8 @@ import { menuHome } from "../ultis/menus";
 import { useNavigate, NavLink } from "react-router-dom";
 import { path } from "../ultis/path";
 import icons from "../ultis/icons";
+import { logoutAccount } from "../apis";
+import jwt_decode from "jwt-decode";
 
 const { FaShoppingCart, FaUser } = icons;
 const notActiveStyle =
@@ -13,7 +15,15 @@ const activeStyle =
 
 function Header() {
   const navigate = useNavigate();
-  const user = localStorage.getItem('user');
+
+  const [user, setUser] = useState(() => {
+    const localStorageUser = JSON.parse(localStorage.getItem('user'));
+    if (localStorageUser) {
+      return jwt_decode(localStorageUser.accessToken);
+    } else {
+      return null;
+    }
+  });
 
   return (
     <div className="header">
@@ -78,16 +88,30 @@ function Header() {
               ) : (
                 <>
                   <li className="flex w-full flex-col text-[13px] justify-end">
+                    <span className="mt-2 p-4 cursor-pointer hover:bg-[#f38609]">
+                      {user.user_name}
+                    </span>
+
                     <span
+                      onClick={() => navigate("/change-password")}
                       className="mt-2 p-4 cursor-pointer hover:bg-[#f38609]"
                     >
-                      {JSON.parse(user).user_name}
+                      Đổi mật khẩu
                     </span>
-                    
+
                     <span
                       onClick={() => {
-                        localStorage.removeItem("user");
-                        navigate("/");
+                        const formData = { user_id : user.user_id };
+
+                        logoutAccount(formData)
+                          .then((reponse) => {
+                            if (reponse.status === 200) {
+                              localStorage.removeItem("user");
+                              setUser(null);
+                              navigate("/");
+                            }
+                          })
+                          .catch((err) => console.log(err));
                       }}
                       className="mt-2 p-4 cursor-pointer hover:bg-[#f38609]"
                     >

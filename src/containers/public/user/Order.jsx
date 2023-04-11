@@ -4,11 +4,19 @@ import { pays, renderError } from "../../../ultis/ValueStatic";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { deleteItems, createBillStatus } from "../../../apis";
+import jwt_decode from 'jwt-decode';
 
 function Order() {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(()=>{
+    const localStorageUser = localStorage.getItem('user');
+    if(localStorageUser){
+      return jwt_decode( JSON.parse(localStorage.getItem('user')).accessToken); 
+    }else{
+      return {};
+    }
+  });
   const [pay, setPay] = useState("cash");
   const totalPriceFood = location.state.totalPriceFood;
   const foodDiscount = location.state.foodDiscount;

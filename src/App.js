@@ -14,6 +14,8 @@ import {
   Order,
   Thank,
   Error,
+  ForgetPassword,
+  ChangePassword,
 } from "./containers/public/user";
 import {
   ListFood,
@@ -41,6 +43,8 @@ const App = () => {
             <Route path={path.CART} element={<Cart />} />
             <Route path={path.ORDER} element={<Order />} />
             <Route path={path.THANK} element={<Thank />} />
+            <Route path={path.FORGETPASSWORD} element={<ForgetPassword />} />
+            <Route path={path.CHANGEPASSWORD} element={<ChangePassword />} />
             <Route path={path.ERROR} element={<Error />} />
             <Route path={path.START} element={<Home />} />
           </Route>

@@ -12,6 +12,8 @@ export const path = {
     MENU__DETAIL__FOOD: "menu/:slugFood",
     ORDER: "order",
     ERROR: "404-error",
+    FORGETPASSWORD: "forget-password",
+    CHANGEPASSWORD: "change-password",
     START: "*",
 }
 

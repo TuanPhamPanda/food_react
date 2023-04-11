@@ -8,6 +8,7 @@ import { NavLink } from "react-router-dom";
 import { showFoods, addItems } from "../../../apis";
 import { toast } from "react-toastify";
 import { quantityRender } from "../../../ultis/ValueStatic";
+import jwt_decode from "jwt-decode";
 
 const {
   AiOutlineArrowLeft,
@@ -20,7 +21,16 @@ const quantity = 10;
 const Menu = () => {
   document.title = title.menu;
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(()=>{
+    const localStorageUser = localStorage.getItem('user');
+    if(localStorageUser){
+      return jwt_decode( JSON.parse(localStorage.getItem('user')).accessToken); 
+    }else{
+      return {};
+    }
+  });
+
+  console.log(user);
 
   useEffect(() => {
     apiFood();
@@ -41,17 +51,53 @@ const Menu = () => {
       });
   };
 
+  const [types, setTypes] = useState([{ type: "Mặn" }, { type: "Chay" }]);
+
+  const handleActiveType = (type) => {
+    setTypes((prev) =>
+      prev.map((item) =>
+        item.type === type
+          ? { ...item, isActive: true }
+          : { ...item, isActive: false }
+      )
+    );
+  };
+
+  const hadleCancelType = () => {
+    setTypes((prev) =>
+      prev.map((item) => {
+        return { type: item.type, isActive: false };
+      })
+    );
+  };
+
   const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % FoodApi.length;
+    const newOffset = (event.selected * itemsPerPage) % currentItems.length;
     setItemOffset(newOffset);
   };
 
+  const renderFullOnPage = (items) => {
+    if (items !== undefined) {
+      const endOffset = itemOffset + itemsPerPage;
+      const currentItems = items.slice(itemOffset, endOffset);
+      setPageCount(Math.ceil(items.length / itemsPerPage));
+      setCurrentItems(currentItems);
+    } else {
+      const endOffset = itemOffset + itemsPerPage;
+      const currentItems = FoodApi.slice(itemOffset, endOffset);
+      setPageCount(Math.ceil(FoodApi.length / itemsPerPage));
+      setCurrentItems(currentItems);
+    }
+  };
+
   useEffect(() => {
-    const endOffset = itemOffset + itemsPerPage;
-    const currentItems = FoodApi.slice(itemOffset, endOffset);
+    renderFullOnPage(FoodApi);
     setPageCount(Math.ceil(FoodApi.length / itemsPerPage));
-    setCurrentItems(currentItems);
   }, [FoodApi]);
+
+  useEffect(() => {
+    renderFullOnPage();
+  }, [itemOffset]);
 
   const [count, setCount] = useState(1);
 
@@ -60,6 +106,7 @@ const Menu = () => {
   };
 
   const [cart, setCart] = useState({});
+  const img_src = `${process.env.REACT_APP_FOOD_API}/images/${cart.food_src}`;
 
   const getCart = (cart) => {
     setCart(cart);
@@ -81,38 +128,22 @@ const Menu = () => {
       .catch((error) => console.log(error));
   };
 
-  let img_src = `${process.env.REACT_APP_FOOD_API}/images/${cart.food_src}`;
   const [active, setActive] = useState("");
-  const [fillter, setFillter] = useState([]);
-
-  const [status, setStatus] = useState([
-    { status: "Bán Chạy nhất" },
-    { status: "Bán Online" },
-    { status: "Giảm Giá" },
-    { status: "Món Ăn Theo Mùa" },
-    { status: "Món Mới" },
-  ]);
 
   const handleFoodAll = () => {
-    hadleCancelPrice();
     hadleCancelType();
-    setFillter(renderFoodAll());
+    hadleCancelPrice();
   };
 
   const handleClickMenuItem = (menu) => {
-    setItemOffset(0);
-
-    const arr = [];
-
-    let menuItems = FoodApi.map((food) => (
-      <Food cart={getCart} key={food.food_id} food={food} />
-    )).filter((item) => {
+    let menuItems = FoodApi.filter((item) => {
       return (
-        item.props.food.food_category.toLocaleLowerCase() ===
+        item.food_category.toLocaleLowerCase() ===
         menu.toLocaleLowerCase()
       );
     });
-    setFillter(menuItems);
+
+    renderFullOnPage(menuItems);
   };
 
   const renderFoodAll = () => {
@@ -121,8 +152,6 @@ const Menu = () => {
     ));
   };
 
-  const [newStatus, setNewStatus] = useState([]);
-
   const [prices, setPrices] = useState([
     { price: "10k - 15k" },
     { price: "16k - 25k" },
@@ -130,18 +159,6 @@ const Menu = () => {
     { price: "> 35k" },
     { price: "< 10k" },
   ]);
-
-  const [types, setTypes] = useState([{ type: "Mặn" }, { type: "Chay" }]);
-
-  const handleActiveType = (type) => {
-    setTypes((prev) =>
-      prev.map((item) =>
-        item.type === type
-          ? { ...item, isActive: true }
-          : { ...item, isActive: false }
-      )
-    );
-  };
 
   const handleActivePrice = (price) => {
     setPrices((prev) =>
@@ -153,14 +170,6 @@ const Menu = () => {
     );
   };
 
-  const hadleCancelType = () => {
-    setTypes((prev) =>
-      prev.map((item) => {
-        return { type: item.type, isActive: false };
-      })
-    );
-  };
-
   const hadleCancelPrice = () => {
     setPrices((prev) =>
       prev.map((item) => {
@@ -169,48 +178,74 @@ const Menu = () => {
     );
   };
 
-  const handleActiveStatus = (sta) => {
-    setNewStatus((prev) => {
-      const isChecked = newStatus.some((item) => item.status === sta);
-      if (isChecked) {
-        return [...prev];
-      } else {
-        return [...prev, { status: sta, isChecked: true }];
-      }
-    });
-  };
+  useEffect(() => {
+    let price = prices.find((item) => item.isActive === true);
+    if (price) {
+      let trimPrice = price.price
+        .trim()
+        .replaceAll("k", "")
+        .replaceAll(" ", "");
 
-  const handleCancelStatus = (sta) => {
-    setNewStatus(() => {
-      let isChecked = newStatus.find((item) => item.status === sta);
-      let temp = newStatus
-        .map((item) => {
-          if (isChecked.isChecked && item.status === isChecked.status) {
-            return undefined;
-          } else {
-            return item;
-          }
-        })
-        .filter((item) => item !== undefined);
-      return temp;
-    });
-  };
+      let arrayTemp = FoodApi;
+
+      if (price.price.includes(">")) {
+        let searchPrice = trimPrice.replace(">", "");
+        arrayTemp = arrayTemp.filter(
+          (item) =>
+            Number.parseInt(
+              new Intl.NumberFormat("en-IN", {
+                maximumSignificantDigits: 3,
+              }).format(item.food_price - item.food_discount)
+            ) > Number.parseInt(`${searchPrice},000`)
+        );
+      } else if (price.price.includes("<")) {
+        let searchPrice = trimPrice.replace("<", "");
+        setCurrentItems(
+          currentItems.filter(
+            (item) =>
+              Number.parseInt(
+                new Intl.NumberFormat("en-IN", {
+                  maximumSignificantDigits: 3,
+                }).format(item.food_price - item.food_discount)
+              ) < Number.parseInt(`${searchPrice},000`)
+          )
+        );
+      }
+
+      let checkPrice = trimPrice.split("-");
+      let searchPrice1 = Number.parseInt(
+        new Intl.NumberFormat("en-IN", {
+          maximumSignificantDigits: 3,
+        }).format(`${checkPrice[0]}`)
+      );
+      let searchPrice2 = Number.parseInt(
+        new Intl.NumberFormat("en-IN", {
+          maximumSignificantDigits: 3,
+        }).format(`${checkPrice[1]}`)
+      );
+
+      arrayTemp = arrayTemp.filter((item) => {
+        let priceFilter = Number.parseInt(
+          new Intl.NumberFormat("en-IN", {
+            maximumSignificantDigits: 3,
+          }).format(item.food_price - item.food_discount)
+        );
+        return priceFilter >= searchPrice1 && priceFilter <= searchPrice2;
+      });
+
+      setCurrentItems(arrayTemp);
+      renderFullOnPage(arrayTemp);
+      setPageCount(Math.ceil(arrayTemp.length / itemsPerPage));
+    }
+
+    if (prices.filter((item) => item.isActive === false).length === 5) {
+      renderFullOnPage(FoodApi);
+      setPageCount(Math.ceil(FoodApi.length / itemsPerPage));
+    }
+  }, [prices]);
 
   useEffect(() => {
-    let temp = [];
-
-    status.forEach((item) => {
-      let isChecked = newStatus?.find((i) => i.status === item.status);
-      if (isChecked?.isChecked !== undefined) {
-        temp.push(isChecked);
-      } else if (!isChecked?.isChecked) {
-        temp.push({ status: item.status });
-      }
-    });
-    setStatus(temp);
-  }, [newStatus]);
-
-  useEffect(() => {
+    /*
     let price = prices.find((item) => item.isActive === true);
     let type = types.find((item) => item.isActive === true);
     let sta = status.filter((item) => item.isChecked === true);
@@ -308,6 +343,8 @@ const Menu = () => {
         );
         return priceFilter >= searchPrice1 && priceFilter <= searchPrice2;
       });
+
+      
     } else if (type !== undefined) {
       setFillter(
         fillter.filter((item) => item.props.food.food_type === type.type)
@@ -315,14 +352,8 @@ const Menu = () => {
     } else {
       setFillter(renderFoodAll());
     }
-  }, [prices, types, status]);
-
-  
-  /*
-  useEffect(() => {
-    setFoodApi(fillter.map((item) => item.props.food));
-  }, [fillter]);
-  */
+    */
+  }, [prices]);
 
   return (
     <>
@@ -340,38 +371,6 @@ const Menu = () => {
                   className="placeholder:text-white search-input"
                   placeholder="Tìm Kiếm..."
                 />
-              </div>
-
-              <div className="row filter-heading">
-                <h1>Trạng thái</h1>
-              </div>
-
-              <div className="row filter-section">
-                <ul className="filter-option">
-                  {status.map((item, index) => {
-                    return (
-                      <li key={index}>
-                        <span
-                          className="flex justify-between cursor-pointer"
-                          onClick={(e) => {
-                            handleActiveStatus(item.status);
-                          }}
-                        >
-                          {item.status}
-                        </span>
-                        {item.isChecked && (
-                          <button
-                            onClick={() => handleCancelStatus(item.status)}
-                            className={`select-btn bg-main-primary-green text-white`}
-                          >
-                            x
-                          </button>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-                <hr />
               </div>
 
               <div className="row filter-heading">
@@ -464,18 +463,14 @@ const Menu = () => {
               </div>
               <div className="row box-container" id="food">
                 {currentItems.map((item) => (
-                  <Food
-                    cart={getCart}
-                    key={item.food_id}
-                    food={item}
-                  />
+                  <Food cart={getCart} key={item.food_id} food={item} />
                 ))}
               </div>
               <div id="page">
                 <ReactPaginate
                   breakLabel="..."
                   nextLabel={<AiOutlineArrowRight size={30} />}
-                  onPageChange={handlePageClick}
+                  onPageChange={(event)=>handlePageClick(event)}
                   pageRangeDisplayed={5}
                   pageCount={pageCount}
                   activeClassName="active"
