@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { menuFood } from "../../../ultis/menus";
 import { toast } from "react-toastify";
 import { title } from "../../../ultis/title";
-import { showFoodById } from "../../../apis/FoodApi";
+import { showFoodById, updateFood } from "../../../apis/FoodApi";
 
 const status = [
   { id: 1, text: "Bán Chạy nhất", value: "best seller" },
@@ -45,15 +45,13 @@ const EditFood = () => {
 
   useEffect(() => {
     setFoodPrice(food?.food_price);
-    setPromotion( (food?.food_discount / food?.food_price) * 100 === 0
-    ? "0"
-    : ((food?.food_discount / food?.food_price) * 100).toFixed(3));
+    setPromotion((food?.food_discount / food?.food_price) * 100);
     setFoodName(food.food_name);
     setType(types.find((item) => item.type === food?.food_type)?.id);
     setFoodImageSource(
       process.env.REACT_APP_FOOD_API + `/images/${food?.food_src}`
     );
-    setFoodDiscount(food?.food_discount);
+    setFoodDiscount(foodDiscount);
     setFoodDescription(food?.food_desc);
     setFoodCategory(menuFood.filter((item) => !item.end)[0].text);
     setSta(
@@ -100,13 +98,12 @@ const EditFood = () => {
         food_star: food.food_star,
         food_vote: food.food_vote,
         food_price: +foodPrice,
-        food_discount: +foodDiscount,
+        food_discount: +foodDiscount.replace(",", ""),
         food_desc: foodDescription,
         food_status:
           sta.length === 0 ? "normal" : sta.toString().replaceAll(",", " "),
         food_type: types.find((item) => item.id === type).type,
         food_category: foodCategory,
-        
       };
 
       if (imageFood !== undefined) {
@@ -115,26 +112,22 @@ const EditFood = () => {
 
       setError("");
       let formData = new FormData();
-
       formData.append("food", JSON.stringify(foodTemp));
       formData.set("food_src", imageFood);
 
-     // toast.success("Sửa thành công");
-      console.log(foodTemp);
-      /*
-      axios({
-        method: "put",
-        url: "http://localhost:8081/api/foods/" + food.food_id,
-        data: formData,
-        headers: { "Content-Type": "multipart/form-data" },
-      })
+      updateFood(formData, id)
         .then((response) => {
-          console.log(response);
+          if (
+            (response.data.changedRows > 0 || response.data.affectedRows > 0) &&
+            response.status === 200
+          ) {
+            toast.info("Cập nhật thành công");
+            navigate("/admin/");
+          }
         })
         .catch((error) => {
           console.log(error);
         });
-        */
     }
   };
 
@@ -145,7 +138,7 @@ const EditFood = () => {
   }, [imageFood]);
 
   useEffect(() => {
-    setFoodDiscount(foodPrice - (foodPrice * promotion) / 100);
+    setFoodDiscount(VND.format((foodPrice * promotion) / 100));
   }, [promotion, foodPrice]);
 
   return (
@@ -201,7 +194,7 @@ const EditFood = () => {
           <div className="flex justify-between">
             <label htmlFor="food_discount">Giá đã KM: </label>
             <input
-              value={VND.format(foodDiscount)}
+              value={foodDiscount}
               type="text"
               id="food_discount"
               name="food_discount"

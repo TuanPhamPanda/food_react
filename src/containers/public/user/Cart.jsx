@@ -1,25 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { title } from "../../../ultis/title";
-import { allItems } from "../../../apis/CartApi";
+import { allItems, deleteItem } from "../../../apis/CartApi";
 import {
   deliveryCharges,
   phoneContact1,
   phoneContact2,
 } from "../../../ultis/ValueStatic";
-import jwt_decode from 'jwt-decode';
+import { toast } from "react-toastify";
+
+document.title = title.cart;
+const user = JSON.parse(localStorage.getItem("user"));
 
 const Cart = () => {
-  document.title = title.cart;
   const navigate = useNavigate();
-  const [user, setUser] = useState(()=>{
-    const localStorageUser = localStorage.getItem('user');
-    if(localStorageUser){
-      return jwt_decode( JSON.parse(localStorage.getItem('user')).accessToken); 
-    }else{
-      return {};
-    }
-  });
   const [carts, setCarts] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [foodDiscount, setFoodDiscount] = useState(0);
@@ -56,7 +50,6 @@ const Cart = () => {
           .map((item) => item.food_discount)
           .reduce((total, current) => total + current);
     }
-
     setFoodDiscount(totalDiscount);
     setTotalPrice(total);
   }, [carts]);
@@ -70,14 +63,13 @@ const Cart = () => {
         </div>
         {carts.length === 0 ? (
           <div className="flex justify-center items-center gap-4 h-[50vh]">
-          <div className="flex flex-col gap-8">
-            <span>
-              Giỏ hàng của bạn hiện tại còn trống 
-            </span>
-            <button onClick={()=>navigate('/menu')} className="btn">Mua hàng ngay</button>
-            
+            <div className="flex flex-col gap-8">
+              <span>Giỏ hàng của bạn hiện tại còn trống</span>
+              <button onClick={() => navigate("/menu")} className="btn">
+                Mua hàng ngay
+              </button>
             </div>
-            </div>
+          </div>
         ) : (
           <div className="container">
             <div className="wrapper wrapper-content">
@@ -129,7 +121,26 @@ const Cart = () => {
                                 </div>
                               </div>
 
-                              <button className="btn remove-btn text-2xl py-2 px-4 mt-8">
+                              <button
+                                className="btn remove-btn text-2xl py-2 px-4 mt-8"
+                                onClick={() => {
+                                  if (
+                                    window.confirm(
+                                      `Bạn có muốn xóa sản phẩm ${cart.food_name} khỏi giỏ hàng không`
+                                    )
+                                  ) {
+                                    deleteItem(user.user_id, cart.food_id).then(
+                                      (value) => {
+                                        if (value.data.affectedRows === 1) {
+                                          allItems(user.user_id).then((value) => {
+                                            setCarts(value.data);
+                                          });
+                                        }
+                                      }
+                                    );
+                                  }
+                                }}
+                              >
                                 Xóa
                               </button>
                             </div>
@@ -275,6 +286,7 @@ const Cart = () => {
                           <i className="fa fa-phone"></i>
                           <span>{phoneContact1.split(":")[0]}:</span>{" "}
                           <input
+                            readOnly
                             type="tel"
                             value={phoneContact1.split(":")[1]}
                           />
@@ -283,6 +295,7 @@ const Cart = () => {
                           <i className="fa fa-phone"></i>
                           <span>{phoneContact2.split(":")[0]}:</span>{" "}
                           <input
+                            readOnly
                             type="tel"
                             value={phoneContact2.split(":")[1]}
                           />

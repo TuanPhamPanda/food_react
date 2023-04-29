@@ -1,22 +1,15 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useAsyncError, useLocation, useNavigate } from "react-router-dom";
 import { pays, renderError } from "../../../ultis/ValueStatic";
 import moment from "moment";
-import { toast } from "react-toastify";
+import { toast, useToast } from "react-toastify";
 import { deleteItems, createBillStatus } from "../../../apis";
-import jwt_decode from 'jwt-decode';
+import jwt_decode from "jwt-decode";
 
 function Order() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [user, setUser] = useState(()=>{
-    const localStorageUser = localStorage.getItem('user');
-    if(localStorageUser){
-      return jwt_decode( JSON.parse(localStorage.getItem('user')).accessToken); 
-    }else{
-      return {};
-    }
-  });
+  const user = useState(() => JSON.parse(localStorage.getItem("user")));
   const [pay, setPay] = useState("cash");
   const totalPriceFood = location.state.totalPriceFood;
   const foodDiscount = location.state.foodDiscount;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { menuFood } from "../../../ultis/menus";
 import { Food } from "../../../components";
 import ReactPaginate from "react-paginate";
@@ -8,7 +8,6 @@ import { NavLink } from "react-router-dom";
 import { showFoods, addItems } from "../../../apis";
 import { toast } from "react-toastify";
 import { quantityRender } from "../../../ultis/ValueStatic";
-import jwt_decode from "jwt-decode";
 
 const {
   AiOutlineArrowLeft,
@@ -21,16 +20,10 @@ const quantity = 10;
 const Menu = () => {
   document.title = title.menu;
 
-  const [user, setUser] = useState(()=>{
-    const localStorageUser = localStorage.getItem('user');
-    if(localStorageUser){
-      return jwt_decode( JSON.parse(localStorage.getItem('user')).accessToken); 
-    }else{
-      return {};
-    }
+  const [user] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    return user;
   });
-
-  console.log(user);
 
   useEffect(() => {
     apiFood();
@@ -136,20 +129,13 @@ const Menu = () => {
   };
 
   const handleClickMenuItem = (menu) => {
-    let menuItems = FoodApi.filter((item) => {
+    const menuItems = FoodApi.filter((item) => {
       return (
-        item.food_category.toLocaleLowerCase() ===
-        menu.toLocaleLowerCase()
+        item.food_category.toLocaleLowerCase() === menu.toLocaleLowerCase()
       );
     });
 
     renderFullOnPage(menuItems);
-  };
-
-  const renderFoodAll = () => {
-    return FoodApi.map((item) => (
-      <Food cart={getCart} key={item.food_id} food={item} />
-    ));
   };
 
   const [prices, setPrices] = useState([
@@ -245,115 +231,24 @@ const Menu = () => {
   }, [prices]);
 
   useEffect(() => {
-    /*
-    let price = prices.find((item) => item.isActive === true);
     let type = types.find((item) => item.isActive === true);
-    let sta = status.filter((item) => item.isChecked === true);
+    if(type !== undefined){
+          let arrayTemp = FoodApi;
 
-    let arrayTemp = fillter;
+    arrayTemp = arrayTemp.filter((item) => {
+      console.log(item);
+      return item.food_type === type.type;
+    });
 
-    if (price !== undefined || type !== undefined || sta.length !== 0) {
-      if (sta.length !== 0) {
-        sta.forEach((item) => {
-          let searchStatus = item.status;
-
-          if (searchStatus.toLowerCase() === "Bán Chạy nhất".toLowerCase()) {
-            arrayTemp = fillter.filter((food) =>
-              food.props.food.food_status.includes("best seller")
-            );
-          }
-
-          if (searchStatus.toLowerCase() === "Bán Online".toLowerCase()) {
-            arrayTemp = arrayTemp.filter((food) => {
-              return food.props.food.food_status.includes("online") === true;
-            });
-          }
-
-          if (searchStatus === "Giảm Giá") {
-            arrayTemp = arrayTemp.filter((food) => {
-              console.log(food);
-              return Number.parseInt(food.props.food.food_discount) !== 0;
-            });
-          }
-
-          if (searchStatus === "Món Ăn Theo Mùa") {
-            arrayTemp = arrayTemp.filter((food) => {
-              return food.props.food.food_status.includes("seasonal dishes");
-            });
-          }
-
-          if (searchStatus === "Món Mới") {
-            arrayTemp = arrayTemp.filter((food) =>
-              food.props.food.food_status.includes("new dishes")
-            );
-          }
-        });
-      }
-
-      let trimPrice = price.price
-        .trim()
-        .replaceAll("k", "")
-        .replaceAll(" ", "");
-
-      if (price.price.includes(">")) {
-        let searchPrice = trimPrice.replace(">", "");
-        arrayTemp = arrayTemp.filter(
-          (item) =>
-            Number.parseInt(
-              new Intl.NumberFormat("en-IN", {
-                maximumSignificantDigits: 3,
-              }).format(
-                item.props.food.food_price - item.props.food.food_discount
-              )
-            ) > Number.parseInt(`${searchPrice},000`)
-        );
-      } else if (price.price.includes("<")) {
-        let searchPrice = trimPrice.replace("<", "");
-        setFillter(
-          fillter.filter(
-            (item) =>
-              Number.parseInt(
-                new Intl.NumberFormat("en-IN", {
-                  maximumSignificantDigits: 3,
-                }).format(
-                  item.props.food.food_price - item.props.food.food_discount
-                )
-              ) < Number.parseInt(`${searchPrice},000`)
-          )
-        );
-      }
-
-      let checkPrice = trimPrice.split("-");
-      let searchPrice1 = Number.parseInt(
-        new Intl.NumberFormat("en-IN", {
-          maximumSignificantDigits: 3,
-        }).format(`${checkPrice[0]}`)
-      );
-      let searchPrice2 = Number.parseInt(
-        new Intl.NumberFormat("en-IN", {
-          maximumSignificantDigits: 3,
-        }).format(`${checkPrice[1]}`)
-      );
-
-      arrayTemp = arrayTemp.filter((item) => {
-        let priceFilter = Number.parseInt(
-          new Intl.NumberFormat("en-IN", {
-            maximumSignificantDigits: 3,
-          }).format(item.props.food.food_price - item.props.food.food_discount)
-        );
-        return priceFilter >= searchPrice1 && priceFilter <= searchPrice2;
-      });
-
-      
-    } else if (type !== undefined) {
-      setFillter(
-        fillter.filter((item) => item.props.food.food_type === type.type)
-      );
-    } else {
-      setFillter(renderFoodAll());
-    }
-    */
-  }, [prices]);
+    setCurrentItems(
+      arrayTemp.filter((item) => item.food_type === type.type)
+    );
+    renderFullOnPage(arrayTemp);
+  }else{
+    renderFullOnPage(FoodApi);
+    setPageCount(Math.ceil(FoodApi.length / itemsPerPage));
+  }
+  }, [types]);
 
   return (
     <>
@@ -379,28 +274,26 @@ const Menu = () => {
 
               <div className="row filter-section">
                 <ul className="filter-option">
-                  {prices.map((item, index) => {
-                    return (
-                      <li key={index}>
-                        <span
-                          onClick={() => handleActivePrice(item.price)}
-                          className={`flex justify-between text-[16px] ${
-                            item.isActive ? "cursor-default" : "cursor-pointer"
-                          }`}
+                  {prices.map((item, index) => (
+                    <li key={index}>
+                      <span
+                        onClick={() => handleActivePrice(item.price)}
+                        className={`flex justify-between text-[16px] ${
+                          item.isActive ? "cursor-default" : "cursor-pointer"
+                        }`}
+                      >
+                        {item.price}
+                      </span>
+                      {item.isActive && (
+                        <button
+                          onClick={() => hadleCancelPrice()}
+                          className={`select-btn bg-main-primary-green text-white`}
                         >
-                          {item.price}
-                        </span>
-                        {item.isActive && (
-                          <button
-                            onClick={() => hadleCancelPrice()}
-                            className={`select-btn bg-main-primary-green text-white`}
-                          >
-                            x
-                          </button>
-                        )}
-                      </li>
-                    );
-                  })}
+                          x
+                        </button>
+                      )}
+                    </li>
+                  ))}
                 </ul>
                 <hr />
               </div>
@@ -411,28 +304,26 @@ const Menu = () => {
 
               <div className="row filter-section">
                 <ul className="filter-option">
-                  {types.map((item, index) => {
-                    return (
-                      <li key={index}>
-                        <span
-                          onClick={() => handleActiveType(item.type)}
-                          className={`flex justify-between text-[16px] ${
-                            item.isActive ? "cursor-default" : "cursor-pointer"
-                          }`}
+                  {types.map((item, index) => (
+                    <li key={index}>
+                      <span
+                        onClick={() => handleActiveType(item.type)}
+                        className={`flex justify-between text-[16px] ${
+                          item.isActive ? "cursor-default" : "cursor-pointer"
+                        }`}
+                      >
+                        {item.type}
+                      </span>
+                      {item.isActive && (
+                        <button
+                          onClick={() => hadleCancelType()}
+                          className={`select-btn bg-main-primary-green text-white`}
                         >
-                          {item.type}
-                        </span>
-                        {item.isActive && (
-                          <button
-                            onClick={() => hadleCancelType()}
-                            className={`select-btn bg-main-primary-green text-white`}
-                          >
-                            x
-                          </button>
-                        )}
-                      </li>
-                    );
-                  })}
+                          x
+                        </button>
+                      )}
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -461,16 +352,17 @@ const Menu = () => {
                   ))}
                 </div>
               </div>
-              <div className="row box-container" id="food">
-                {currentItems.map((item) => (
-                  <Food cart={getCart} key={item.food_id} food={item} />
+              <div className="row box-container">
+                {currentItems.map((item, index) => (
+                  <Food cart={getCart} key={index} food={item} />
                 ))}
               </div>
-              <div id="page">
+
+              <div>
                 <ReactPaginate
                   breakLabel="..."
                   nextLabel={<AiOutlineArrowRight size={30} />}
-                  onPageChange={(event)=>handlePageClick(event)}
+                  onPageChange={(event) => handlePageClick(event)}
                   pageRangeDisplayed={5}
                   pageCount={pageCount}
                   activeClassName="active"
@@ -575,4 +467,4 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default memo(Menu);

@@ -5,7 +5,6 @@ import { useNavigate, NavLink } from "react-router-dom";
 import { path } from "../ultis/path";
 import icons from "../ultis/icons";
 import { logoutAccount } from "../apis";
-import jwt_decode from "jwt-decode";
 
 const { FaShoppingCart, FaUser } = icons;
 const notActiveStyle =
@@ -19,7 +18,7 @@ function Header() {
   const [user, setUser] = useState(() => {
     const localStorageUser = JSON.parse(localStorage.getItem('user'));
     if (localStorageUser) {
-      return jwt_decode(localStorageUser.accessToken);
+      return localStorageUser;
     } else {
       return null;
     }

@@ -58,7 +58,7 @@ export const deleteItem = (user_id, food_id) =>
   new Promise(async (resolve, reject) => {
     try {
       const reponse = await axios({
-        url: `/cartItem/${(user_id, food_id)}`,
+        url: `/cartItem/${user_id}/${food_id}`,
         method: "delete",
       });
       resolve(reponse);
