@@ -12,6 +12,8 @@ const instance = axios.create({
   },
 });
 
+/*
+
 axios.interceptors.request.use(async (config) => {
   if (user) {
     const decodedToken = jwt_decode(user.accessToken);
@@ -33,6 +35,7 @@ axios.interceptors.request.use(async (config) => {
   }
   return config;
 });
+*/
 
 axios.interceptors.response.use(
   (response) => {
