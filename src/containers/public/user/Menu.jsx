@@ -65,7 +65,8 @@ const Menu = () => {
   };
 
   const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % currentItems.length;
+    const newOffset = (event.selected * itemsPerPage) / currentItems.length;
+    console.log(newOffset);
     setItemOffset(newOffset);
   };
 
@@ -236,7 +237,6 @@ const Menu = () => {
           let arrayTemp = FoodApi;
 
     arrayTemp = arrayTemp.filter((item) => {
-      console.log(item);
       return item.food_type === type.type;
     });
 
