@@ -8,6 +8,7 @@ import { NavLink } from "react-router-dom";
 import { showFoods, addItems } from "../../../apis";
 import { toast } from "react-toastify";
 import { quantityRender } from "../../../ultis/ValueStatic";
+import ClipLoader from 'react-spinners/ClipLoader';
 
 const {
   AiOutlineArrowLeft,
@@ -33,6 +34,7 @@ const Menu = () => {
   const [itemOffset, setItemOffset] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [currentItems, setCurrentItems] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const apiFood = () => {
     showFoods()
@@ -40,6 +42,7 @@ const Menu = () => {
       .then((data) => {
         if (data.status === 200) {
           setFoodApi(data.data);
+          setLoading(true);
         }
       });
   };
@@ -233,21 +236,19 @@ const Menu = () => {
 
   useEffect(() => {
     let type = types.find((item) => item.isActive === true);
-    if(type !== undefined){
-          let arrayTemp = FoodApi;
+    if (type !== undefined) {
+      let arrayTemp = FoodApi;
 
-    arrayTemp = arrayTemp.filter((item) => {
-      return item.food_type === type.type;
-    });
+      arrayTemp = arrayTemp.filter((item) => {
+        return item.food_type === type.type;
+      });
 
-    setCurrentItems(
-      arrayTemp.filter((item) => item.food_type === type.type)
-    );
-    renderFullOnPage(arrayTemp);
-  }else{
-    renderFullOnPage(FoodApi);
-    setPageCount(Math.ceil(FoodApi.length / itemsPerPage));
-  }
+      setCurrentItems(arrayTemp.filter((item) => item.food_type === type.type));
+      renderFullOnPage(arrayTemp);
+    } else {
+      renderFullOnPage(FoodApi);
+      setPageCount(Math.ceil(FoodApi.length / itemsPerPage));
+    }
   }, [types]);
 
   return (
@@ -328,7 +329,7 @@ const Menu = () => {
               </div>
             </div>
 
-            <div className="col-sm-8 mx-[15px] px-[15px]">
+            <div className="col-sm-8 mx-[15px] px-[15px] relative">
               <div className="flex flex-wrap mb-[-15px]">
                 <div className="menu-tabs flex justify-center flex-wrap">
                   {menuFood.map((item, index) => (
@@ -352,27 +353,40 @@ const Menu = () => {
                   ))}
                 </div>
               </div>
-              <div className="row box-container">
-                {currentItems.map((item, index) => (
-                  <Food cart={getCart} key={index} food={item} />
-                ))}
-              </div>
+              {loading ? (
+                <>
+                  <div className="row box-container">
+                    {currentItems.map((item, index) => (
+                      <Food cart={getCart} key={index} food={item} />
+                    ))}
+                  </div>
 
-              <div>
-                <ReactPaginate
-                  breakLabel="..."
-                  nextLabel={<AiOutlineArrowRight size={30} />}
-                  onPageChange={(event) => handlePageClick(event)}
-                  pageRangeDisplayed={5}
-                  pageCount={pageCount}
-                  activeClassName="active"
-                  containerClassName="pagination"
-                  nextClassName="page-num"
-                  previousClassName="page-num"
-                  previousLabel={<AiOutlineArrowLeft size={30} />}
-                  renderOnZeroPageCount={null}
-                />
-              </div>
+                  <div>
+                    <ReactPaginate
+                      breakLabel="..."
+                      nextLabel={<AiOutlineArrowRight size={30} />}
+                      onPageChange={(event) => handlePageClick(event)}
+                      pageRangeDisplayed={5}
+                      pageCount={pageCount}
+                      activeClassName="active"
+                      containerClassName="pagination"
+                      nextClassName="page-num"
+                      previousClassName="page-num"
+                      previousLabel={<AiOutlineArrowLeft size={30} />}
+                      renderOnZeroPageCount={null}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div style={{position: "absolute", right: "50%", top: "50%"}}>
+                  <ClipLoader
+                    color="#36d7b7"
+                    cssOverride={{}}
+                    loading
+                    speedMultiplier={0.5}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -29,7 +29,7 @@ function Food({ food, cart }) {
     }
   };
 
-  let img_src = `${process.env.REACT_APP_FOOD_IMAGE}/${food.food_src}`;
+  const img_src = `${process.env.REACT_APP_FOOD_IMAGE}/${food?.food_src}`;
 
   let startFull = [];
   let startHaft = food.food_star?.split(".")[1];
